@@ -1,9 +1,6 @@
 using BrainStimulator.Utils;
 using MaterialSkin;
 using MaterialSkin.Controls;
-using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
 
 namespace BrainStimulator
 {
