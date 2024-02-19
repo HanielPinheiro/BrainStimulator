@@ -1,6 +1,8 @@
 using BrainStimulator.Utils;
 using MaterialSkin;
 using MaterialSkin.Controls;
+using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace BrainStimulator
@@ -8,77 +10,83 @@ namespace BrainStimulator
     public partial class BrainStimulator : MaterialForm
     {
         private readonly SortableBindingList<Pulse> pulses = new SortableBindingList<Pulse>();
+
         public BrainStimulator()
         {
             InitializeComponent();
 
             var materialSkinManager = MaterialSkinManager.Instance;
-
-            // Set this to false to disable backcolor enforcing on non-materialSkin components
-            // This HAS to be set before the AddFormToManage()
             materialSkinManager.EnforceBackcolorOnAllComponents = true;
-
             materialSkinManager.AddFormToManage(this);
-            materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
+            materialSkinManager.Theme = MaterialSkinManager.Themes.LIGHT;
             materialSkinManager.ColorScheme = new ColorScheme(Primary.BlueGrey800, Primary.BlueGrey900, Primary.BlueGrey500, Accent.LightBlue200, TextShade.WHITE);
 
-            PeriodicTab_GridMain.DefaultConfiguration(pulses);
+            PeriodicTab_GridMain.DataSource = pulses;
+            PeriodicTab_GridMain.AutoGenerateColumns = false;
+            SetColumns();
         }
 
-        #region Comunicacao Placa
-
-        private void btnConnect_Click(object sender, EventArgs e)
+        private void SetColumns()
         {
-            btnSendDataToBoard.Enabled = true;
-            txtTerminal.Enabled = true;
+            List<DataGridViewColumn> columns = new List<DataGridViewColumn>();
+
+            foreach (DataGridViewColumn item in PeriodicTab_GridMain.Columns)
+            {
+                switch (item.DataPropertyName)
+                {
+
+                    case nameof(Pulse.AfterPulseMeasureUnity):
+                    case nameof(Pulse.PulseMeasureUnity):
+                        columns.Add(GenerateComboBoxColumn(item.Name, Pulse.measureUnityValues));
+                        break;
+
+                    case nameof(Pulse.Current):
+                        columns.Add(GenerateComboBoxColumn(item.Name, Pulse.pulseCurrentValues));
+                        break;
+
+                    case nameof(Pulse.Valence):
+                        columns.Add(GenerateComboBoxColumn(item.Name, Pulse.pulseValenceValues));
+                        break;
+
+                    default:
+                        columns.Add(item);
+                        break;
+                }
+            }
+
+            PeriodicTab_GridMain.Columns.Clear();
+            PeriodicTab_GridMain.Columns.AddRange(columns.ToArray());
         }
-        private void btnDisconnect_Click(object sender, EventArgs e)
+
+        private DataGridViewComboBoxColumn GenerateComboBoxColumn(string name, List<string> values)
         {
-            btnSendDataToBoard.Enabled = false;
-            txtTerminal.Enabled = false;
+            DataGridViewComboBoxColumn col = new DataGridViewComboBoxColumn();
+            col.DataSource = values;
+            //col.ValueMember = name;
+            //col.DisplayMember = values.FirstOrDefault();
+            //col.DataPropertyName = name;
+            col.HeaderText = name;
+            col.Width = 160;
+            return col;
         }
-
-
-        #endregion
-
-        #region Tabs que controlam estimulos
-
-        #region Periodic Tab
 
         private void PeriodicTab_AddPulse_Click(object sender, EventArgs e)
         {
-            try
-            {
-                PeriodicTab_GridMain.EndEdit(DataGridViewDataErrorContexts.LeaveControl);
-
-                pulses.Add(new Pulse());
-
-                PeriodicTab_GridMain.Refresh();
-            }
-            catch (Exception ex) { Error("Problema ao adicionar linha ao grid", ex); }
+            pulses.Add(new Pulse());
         }
 
         private void PeriodicTab_RemovePulse_Click(object sender, EventArgs e)
         {
-            try
-            {
-                PeriodicTab_GridMain.EndEdit(DataGridViewDataErrorContexts.LeaveControl);
+            HashSet<Pulse> pulsesToRemove = new HashSet<Pulse>();
+            foreach (DataGridViewCell cell in PeriodicTab_GridMain.SelectedCells)
 
-                if (sender is Pulse p) pulses.Remove(p);
-
-                PeriodicTab_GridMain.Refresh();
-            }
-            catch (Exception ex) { Error("Problema ao remover linha do grid", ex); }
+                if (PeriodicTab_GridMain.Rows[cell.RowIndex].DataBoundItem is Pulse pulse) pulsesToRemove.Add(pulse);
+            foreach (Pulse pulse in pulsesToRemove) pulses.Remove(pulse);
         }
 
-        #endregion
-
-        #endregion
-
-
-        private void Error(string message, Exception e)
+        private void PeriodicTab_GridMain_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
-            MessageBox.Show($"{message} - {e.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            // Log or handle the error here
         }
     }
 }

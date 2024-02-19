@@ -28,155 +28,185 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BrainStimulator));
             tableLayoutPanel1 = new TableLayoutPanel();
-            tabController = new TabControl();
-            tabPeriodic = new TabPage();
+            materialTabControl1 = new MaterialSkin.Controls.MaterialTabControl();
+            TabPeriodic = new TabPage();
             tbPanel_PeriodicTab = new TableLayoutPanel();
+            chartPeriodic = new System.Windows.Forms.DataVisualization.Charting.Chart();
             tableLayoutPanel7 = new TableLayoutPanel();
             tableLayoutPanel8 = new TableLayoutPanel();
-            PeriodicTab_AddPulse = new Button();
-            PeriodicTab_RemovePulse = new Button();
+            btnDeleteRows = new MaterialSkin.Controls.MaterialButton();
+            btnAddRows = new MaterialSkin.Controls.MaterialButton();
             PeriodicTab_GridMain = new DataGridView();
-            chartPeriodic = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            tabChaotic = new TabPage();
-            tableLayoutPanel4 = new TableLayoutPanel();
-            gpBox_ArduinoData = new GroupBox();
-            txtArea_ArduinoData = new RichTextBox();
-            gpBox_Terminal = new GroupBox();
-            txtTerminal = new TextBox();
-            btnSendDataToBoard = new Button();
+            TabChaotic = new TabPage();
             tableLayoutPanel1.SuspendLayout();
-            tabController.SuspendLayout();
-            tabPeriodic.SuspendLayout();
+            materialTabControl1.SuspendLayout();
+            TabPeriodic.SuspendLayout();
             tbPanel_PeriodicTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)chartPeriodic).BeginInit();
             tableLayoutPanel7.SuspendLayout();
             tableLayoutPanel8.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)PeriodicTab_GridMain).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)chartPeriodic).BeginInit();
-            tableLayoutPanel4.SuspendLayout();
-            gpBox_ArduinoData.SuspendLayout();
-            gpBox_Terminal.SuspendLayout();
             SuspendLayout();
             // 
             // tableLayoutPanel1
             // 
-            tableLayoutPanel1.ColumnCount = 2;
+            tableLayoutPanel1.ColumnCount = 1;
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 213F));
-            tableLayoutPanel1.Controls.Add(tableLayoutPanel4, 0, 0);
-            tableLayoutPanel1.Controls.Add(tabController, 0, 0);
+            tableLayoutPanel1.Controls.Add(materialTabControl1, 0, 0);
             tableLayoutPanel1.Dock = DockStyle.Fill;
-            tableLayoutPanel1.Location = new Point(0, 0);
+            tableLayoutPanel1.Location = new Point(3, 64);
             tableLayoutPanel1.Margin = new Padding(0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 28.8770046F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 71.12299F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel1.Size = new Size(784, 561);
+            tableLayoutPanel1.Size = new Size(794, 533);
             tableLayoutPanel1.TabIndex = 0;
             // 
-            // tabController
+            // materialTabControl1
             // 
-            tabController.Controls.Add(tabPeriodic);
-            tabController.Controls.Add(tabChaotic);
-            tabController.Dock = DockStyle.Fill;
-            tabController.Location = new Point(3, 3);
-            tabController.Name = "tabController";
-            tabController.SelectedIndex = 0;
-            tabController.Size = new Size(565, 555);
-            tabController.TabIndex = 1;
+            materialTabControl1.Controls.Add(TabPeriodic);
+            materialTabControl1.Controls.Add(TabChaotic);
+            materialTabControl1.Depth = 0;
+            materialTabControl1.Dock = DockStyle.Fill;
+            materialTabControl1.Location = new Point(3, 3);
+            materialTabControl1.MouseState = MaterialSkin.MouseState.HOVER;
+            materialTabControl1.Multiline = true;
+            materialTabControl1.Name = "materialTabControl1";
+            materialTabControl1.SelectedIndex = 0;
+            materialTabControl1.Size = new Size(788, 527);
+            materialTabControl1.TabIndex = 3;
             // 
-            // tabPeriodic
+            // TabPeriodic
             // 
-            tabPeriodic.Controls.Add(tbPanel_PeriodicTab);
-            tabPeriodic.Location = new Point(4, 24);
-            tabPeriodic.Name = "tabPeriodic";
-            tabPeriodic.Padding = new Padding(3);
-            tabPeriodic.Size = new Size(557, 527);
-            tabPeriodic.TabIndex = 0;
-            tabPeriodic.Text = "Periódico ou Nao Periódico";
-            tabPeriodic.UseVisualStyleBackColor = true;
+            TabPeriodic.Controls.Add(tbPanel_PeriodicTab);
+            TabPeriodic.Location = new Point(4, 24);
+            TabPeriodic.Name = "TabPeriodic";
+            TabPeriodic.Padding = new Padding(3);
+            TabPeriodic.Size = new Size(780, 499);
+            TabPeriodic.TabIndex = 0;
+            TabPeriodic.Text = "Periódicos ou Não Periódicos";
+            TabPeriodic.UseVisualStyleBackColor = true;
             // 
             // tbPanel_PeriodicTab
             // 
             tbPanel_PeriodicTab.ColumnCount = 1;
             tbPanel_PeriodicTab.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 28.53403F));
             tbPanel_PeriodicTab.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 71.4659653F));
-            tbPanel_PeriodicTab.Controls.Add(tableLayoutPanel7, 0, 0);
             tbPanel_PeriodicTab.Controls.Add(chartPeriodic, 0, 1);
+            tbPanel_PeriodicTab.Controls.Add(tableLayoutPanel7, 0, 0);
             tbPanel_PeriodicTab.Dock = DockStyle.Fill;
             tbPanel_PeriodicTab.Location = new Point(3, 3);
             tbPanel_PeriodicTab.Margin = new Padding(0);
             tbPanel_PeriodicTab.Name = "tbPanel_PeriodicTab";
             tbPanel_PeriodicTab.RowCount = 2;
-            tbPanel_PeriodicTab.RowStyles.Add(new RowStyle(SizeType.Percent, 34.02062F));
-            tbPanel_PeriodicTab.RowStyles.Add(new RowStyle(SizeType.Percent, 65.97938F));
-            tbPanel_PeriodicTab.Size = new Size(551, 521);
-            tbPanel_PeriodicTab.TabIndex = 0;
+            tbPanel_PeriodicTab.RowStyles.Add(new RowStyle(SizeType.Percent, 40.77079F));
+            tbPanel_PeriodicTab.RowStyles.Add(new RowStyle(SizeType.Percent, 59.22921F));
+            tbPanel_PeriodicTab.Size = new Size(774, 493);
+            tbPanel_PeriodicTab.TabIndex = 1;
+            // 
+            // chartPeriodic
+            // 
+            chartArea1.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
+            chartArea1.AxisX.MajorTickMark.Enabled = false;
+            chartArea1.AxisY.LineWidth = 0;
+            chartArea1.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
+            chartArea1.AxisY.MajorTickMark.Enabled = false;
+            chartArea1.Name = "ChartArea1";
+            chartPeriodic.ChartAreas.Add(chartArea1);
+            chartPeriodic.Dock = DockStyle.Fill;
+            chartPeriodic.Location = new Point(0, 201);
+            chartPeriodic.Margin = new Padding(0);
+            chartPeriodic.Name = "chartPeriodic";
+            series1.BorderWidth = 2;
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.StepLine;
+            series1.Name = "Pulses";
+            chartPeriodic.Series.Add(series1);
+            chartPeriodic.Size = new Size(774, 292);
+            chartPeriodic.TabIndex = 2;
+            chartPeriodic.Text = "chart1";
             // 
             // tableLayoutPanel7
             // 
-            tableLayoutPanel7.ColumnCount = 2;
+            tableLayoutPanel7.ColumnCount = 1;
             tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 26.43979F));
             tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 73.56021F));
             tableLayoutPanel7.Controls.Add(tableLayoutPanel8, 0, 0);
-            tableLayoutPanel7.Controls.Add(PeriodicTab_GridMain, 1, 0);
+            tableLayoutPanel7.Controls.Add(PeriodicTab_GridMain, 1, 1);
             tableLayoutPanel7.Dock = DockStyle.Fill;
             tableLayoutPanel7.Location = new Point(0, 0);
             tableLayoutPanel7.Margin = new Padding(0);
             tableLayoutPanel7.Name = "tableLayoutPanel7";
-            tableLayoutPanel7.RowCount = 1;
-            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel7.Size = new Size(551, 177);
+            tableLayoutPanel7.RowCount = 2;
+            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 21.393034F));
+            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 78.6069641F));
+            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel7.Size = new Size(774, 201);
             tableLayoutPanel7.TabIndex = 0;
             // 
             // tableLayoutPanel8
             // 
-            tableLayoutPanel8.ColumnCount = 1;
-            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel8.Controls.Add(PeriodicTab_AddPulse, 0, 0);
-            tableLayoutPanel8.Controls.Add(PeriodicTab_RemovePulse, 0, 1);
+            tableLayoutPanel8.ColumnCount = 2;
+            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 22.2222214F));
+            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 77.77778F));
+            tableLayoutPanel8.Controls.Add(btnDeleteRows, 0, 0);
+            tableLayoutPanel8.Controls.Add(btnAddRows, 0, 0);
             tableLayoutPanel8.Dock = DockStyle.Fill;
             tableLayoutPanel8.Location = new Point(0, 0);
             tableLayoutPanel8.Margin = new Padding(0);
             tableLayoutPanel8.Name = "tableLayoutPanel8";
-            tableLayoutPanel8.RowCount = 2;
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel8.Size = new Size(145, 177);
-            tableLayoutPanel8.TabIndex = 0;
+            tableLayoutPanel8.RowCount = 1;
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 49.1017952F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 50.8982048F));
+            tableLayoutPanel8.Size = new Size(774, 43);
+            tableLayoutPanel8.TabIndex = 6;
             // 
-            // PeriodicTab_AddPulse
+            // btnDeleteRows
             // 
-            PeriodicTab_AddPulse.Dock = DockStyle.Fill;
-            PeriodicTab_AddPulse.FlatStyle = FlatStyle.Flat;
-            PeriodicTab_AddPulse.Location = new Point(0, 0);
-            PeriodicTab_AddPulse.Margin = new Padding(0);
-            PeriodicTab_AddPulse.Name = "PeriodicTab_AddPulse";
-            PeriodicTab_AddPulse.Size = new Size(145, 88);
-            PeriodicTab_AddPulse.TabIndex = 0;
-            PeriodicTab_AddPulse.Text = "Adicionar Pulso";
-            PeriodicTab_AddPulse.UseVisualStyleBackColor = true;
-            PeriodicTab_AddPulse.Click += PeriodicTab_AddPulse_Click;
+            btnDeleteRows.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnDeleteRows.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            btnDeleteRows.Depth = 0;
+            btnDeleteRows.HighEmphasis = true;
+            btnDeleteRows.Icon = null;
+            btnDeleteRows.Location = new Point(176, 6);
+            btnDeleteRows.Margin = new Padding(4, 6, 4, 6);
+            btnDeleteRows.MouseState = MaterialSkin.MouseState.HOVER;
+            btnDeleteRows.Name = "btnDeleteRows";
+            btnDeleteRows.NoAccentTextColor = Color.Empty;
+            btnDeleteRows.Size = new Size(148, 31);
+            btnDeleteRows.TabIndex = 5;
+            btnDeleteRows.Text = "Remover pulsos";
+            btnDeleteRows.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+            btnDeleteRows.UseAccentColor = false;
+            btnDeleteRows.UseVisualStyleBackColor = true;
+            btnDeleteRows.Click += PeriodicTab_RemovePulse_Click;
             // 
-            // PeriodicTab_RemovePulse
+            // btnAddRows
             // 
-            PeriodicTab_RemovePulse.Dock = DockStyle.Fill;
-            PeriodicTab_RemovePulse.FlatStyle = FlatStyle.Flat;
-            PeriodicTab_RemovePulse.Location = new Point(0, 88);
-            PeriodicTab_RemovePulse.Margin = new Padding(0);
-            PeriodicTab_RemovePulse.Name = "PeriodicTab_RemovePulse";
-            PeriodicTab_RemovePulse.Size = new Size(145, 89);
-            PeriodicTab_RemovePulse.TabIndex = 1;
-            PeriodicTab_RemovePulse.Text = "Remover Pulso";
-            PeriodicTab_RemovePulse.UseVisualStyleBackColor = true;
-            PeriodicTab_RemovePulse.Click += PeriodicTab_RemovePulse_Click;
+            btnAddRows.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnAddRows.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            btnAddRows.Depth = 0;
+            btnAddRows.HighEmphasis = true;
+            btnAddRows.Icon = null;
+            btnAddRows.Location = new Point(4, 6);
+            btnAddRows.Margin = new Padding(4, 6, 4, 6);
+            btnAddRows.MouseState = MaterialSkin.MouseState.HOVER;
+            btnAddRows.Name = "btnAddRows";
+            btnAddRows.NoAccentTextColor = Color.Empty;
+            btnAddRows.Size = new Size(157, 31);
+            btnAddRows.TabIndex = 0;
+            btnAddRows.Text = "adicionar pulsos";
+            btnAddRows.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+            btnAddRows.UseAccentColor = false;
+            btnAddRows.UseVisualStyleBackColor = true;
+            btnAddRows.Click += PeriodicTab_AddPulse_Click;
             // 
             // PeriodicTab_GridMain
             // 
@@ -186,122 +216,29 @@
             PeriodicTab_GridMain.AllowUserToResizeRows = false;
             PeriodicTab_GridMain.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             PeriodicTab_GridMain.Dock = DockStyle.Fill;
-            PeriodicTab_GridMain.Location = new Point(145, 0);
+            PeriodicTab_GridMain.Location = new Point(0, 43);
             PeriodicTab_GridMain.Margin = new Padding(0);
             PeriodicTab_GridMain.Name = "PeriodicTab_GridMain";
             PeriodicTab_GridMain.RowTemplate.Height = 25;
-            PeriodicTab_GridMain.Size = new Size(406, 177);
+            PeriodicTab_GridMain.Size = new Size(774, 158);
             PeriodicTab_GridMain.TabIndex = 1;
+            PeriodicTab_GridMain.DataError += PeriodicTab_GridMain_DataError;
             // 
-            // chartPeriodic
+            // TabChaotic
             // 
-            chartArea2.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
-            chartArea2.AxisX.MajorTickMark.Enabled = false;
-            chartArea2.AxisY.LineWidth = 0;
-            chartArea2.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
-            chartArea2.AxisY.MajorTickMark.Enabled = false;
-            chartArea2.Name = "ChartArea1";
-            chartPeriodic.ChartAreas.Add(chartArea2);
-            chartPeriodic.Dock = DockStyle.Fill;
-            chartPeriodic.Location = new Point(0, 177);
-            chartPeriodic.Margin = new Padding(0);
-            chartPeriodic.Name = "chartPeriodic";
-            series2.BorderWidth = 2;
-            series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.StepLine;
-            series2.Name = "Pulses";
-            chartPeriodic.Series.Add(series2);
-            chartPeriodic.Size = new Size(551, 344);
-            chartPeriodic.TabIndex = 1;
-            chartPeriodic.Text = "chart1";
-            // 
-            // tabChaotic
-            // 
-            tabChaotic.Location = new Point(4, 24);
-            tabChaotic.Name = "tabChaotic";
-            tabChaotic.Padding = new Padding(3);
-            tabChaotic.Size = new Size(557, 527);
-            tabChaotic.TabIndex = 1;
-            tabChaotic.Text = "Caótico";
-            tabChaotic.UseVisualStyleBackColor = true;
-            // 
-            // tableLayoutPanel4
-            // 
-            tableLayoutPanel4.ColumnCount = 1;
-            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel4.Controls.Add(btnSendDataToBoard, 0, 2);
-            tableLayoutPanel4.Controls.Add(gpBox_Terminal, 0, 1);
-            tableLayoutPanel4.Controls.Add(gpBox_ArduinoData, 0, 0);
-            tableLayoutPanel4.Dock = DockStyle.Fill;
-            tableLayoutPanel4.Location = new Point(571, 0);
-            tableLayoutPanel4.Margin = new Padding(0);
-            tableLayoutPanel4.Name = "tableLayoutPanel4";
-            tableLayoutPanel4.RowCount = 3;
-            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 70F));
-            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 15F));
-            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 15F));
-            tableLayoutPanel4.Size = new Size(213, 561);
-            tableLayoutPanel4.TabIndex = 2;
-            // 
-            // gpBox_ArduinoData
-            // 
-            gpBox_ArduinoData.Controls.Add(txtArea_ArduinoData);
-            gpBox_ArduinoData.Dock = DockStyle.Fill;
-            gpBox_ArduinoData.Location = new Point(3, 3);
-            gpBox_ArduinoData.Name = "gpBox_ArduinoData";
-            gpBox_ArduinoData.Size = new Size(207, 386);
-            gpBox_ArduinoData.TabIndex = 0;
-            gpBox_ArduinoData.TabStop = false;
-            gpBox_ArduinoData.Text = "Dados do Estimulador";
-            // 
-            // txtArea_ArduinoData
-            // 
-            txtArea_ArduinoData.Dock = DockStyle.Fill;
-            txtArea_ArduinoData.Enabled = false;
-            txtArea_ArduinoData.Location = new Point(3, 19);
-            txtArea_ArduinoData.Name = "txtArea_ArduinoData";
-            txtArea_ArduinoData.Size = new Size(201, 364);
-            txtArea_ArduinoData.TabIndex = 0;
-            txtArea_ArduinoData.Text = "";
-            // 
-            // gpBox_Terminal
-            // 
-            gpBox_Terminal.Controls.Add(txtTerminal);
-            gpBox_Terminal.Dock = DockStyle.Fill;
-            gpBox_Terminal.Location = new Point(3, 395);
-            gpBox_Terminal.Name = "gpBox_Terminal";
-            gpBox_Terminal.Size = new Size(207, 78);
-            gpBox_Terminal.TabIndex = 2;
-            gpBox_Terminal.TabStop = false;
-            gpBox_Terminal.Text = "Terminal";
-            // 
-            // txtTerminal
-            // 
-            txtTerminal.Dock = DockStyle.Fill;
-            txtTerminal.Enabled = false;
-            txtTerminal.Location = new Point(3, 19);
-            txtTerminal.Name = "txtTerminal";
-            txtTerminal.Size = new Size(201, 23);
-            txtTerminal.TabIndex = 0;
-            // 
-            // btnSendDataToBoard
-            // 
-            btnSendDataToBoard.Dock = DockStyle.Fill;
-            btnSendDataToBoard.Enabled = false;
-            btnSendDataToBoard.FlatStyle = FlatStyle.Flat;
-            btnSendDataToBoard.Location = new Point(0, 476);
-            btnSendDataToBoard.Margin = new Padding(0);
-            btnSendDataToBoard.Name = "btnSendDataToBoard";
-            btnSendDataToBoard.Size = new Size(213, 85);
-            btnSendDataToBoard.TabIndex = 4;
-            btnSendDataToBoard.Text = "Enviar dados para placa";
-            btnSendDataToBoard.UseVisualStyleBackColor = true;
+            TabChaotic.Location = new Point(4, 24);
+            TabChaotic.Name = "TabChaotic";
+            TabChaotic.Padding = new Padding(3);
+            TabChaotic.Size = new Size(780, 499);
+            TabChaotic.TabIndex = 1;
+            TabChaotic.Text = "Caótico";
+            TabChaotic.UseVisualStyleBackColor = true;
             // 
             // BrainStimulator
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(784, 561);
+            ClientSize = new Size(800, 600);
             Controls.Add(tableLayoutPanel1);
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximumSize = new Size(800, 600);
@@ -310,38 +247,29 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Estimulador Cerebral";
             tableLayoutPanel1.ResumeLayout(false);
-            tabController.ResumeLayout(false);
-            tabPeriodic.ResumeLayout(false);
+            materialTabControl1.ResumeLayout(false);
+            TabPeriodic.ResumeLayout(false);
             tbPanel_PeriodicTab.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)chartPeriodic).EndInit();
             tableLayoutPanel7.ResumeLayout(false);
             tableLayoutPanel8.ResumeLayout(false);
+            tableLayoutPanel8.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)PeriodicTab_GridMain).EndInit();
-            ((System.ComponentModel.ISupportInitialize)chartPeriodic).EndInit();
-            tableLayoutPanel4.ResumeLayout(false);
-            gpBox_ArduinoData.ResumeLayout(false);
-            gpBox_Terminal.ResumeLayout(false);
-            gpBox_Terminal.PerformLayout();
             ResumeLayout(false);
         }
 
         #endregion
 
         private TableLayoutPanel tableLayoutPanel1;
-        private TabControl tabController;
-        private TabPage tabPeriodic;
+        private MaterialSkin.Controls.MaterialTabControl materialTabControl1;
+        private TabPage TabPeriodic;
         private TableLayoutPanel tbPanel_PeriodicTab;
+        private TabPage TabChaotic;
         private TableLayoutPanel tableLayoutPanel7;
-        private TableLayoutPanel tableLayoutPanel8;
-        private Button PeriodicTab_AddPulse;
-        private Button PeriodicTab_RemovePulse;
         private DataGridView PeriodicTab_GridMain;
-        private TabPage tabChaotic;
         private System.Windows.Forms.DataVisualization.Charting.Chart chartPeriodic;
-        private TableLayoutPanel tableLayoutPanel4;
-        private Button btnSendDataToBoard;
-        private GroupBox gpBox_Terminal;
-        private TextBox txtTerminal;
-        private GroupBox gpBox_ArduinoData;
-        private RichTextBox txtArea_ArduinoData;
+        private TableLayoutPanel tableLayoutPanel8;
+        private MaterialSkin.Controls.MaterialButton btnDeleteRows;
+        private MaterialSkin.Controls.MaterialButton btnAddRows;
     }
 }
