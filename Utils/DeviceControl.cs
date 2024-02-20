@@ -2,7 +2,7 @@
 
 namespace BrainStimulator.Utils
 {
-    public class ControlDevice : IDisposable
+    public class DeviceControl : IDisposable
     {
         private const int defaultSleep = 1000;
 
@@ -10,13 +10,13 @@ namespace BrainStimulator.Utils
         private readonly SerialPort serialPort;
         public bool IsConnected { get => serialPort!.IsOpen; }
 
-        public ControlDevice() { serialPort = new SerialPort(); }
+        public DeviceControl() { serialPort = new SerialPort(); }
 
         /// <summary>
         /// This constructor use <see cref="DefaultBoardConfiguration"/>
         /// </summary>
         /// <param name="portName"></param>
-        public ControlDevice(string _portName)
+        public DeviceControl(string _portName)
         {
             serialPort = new SerialPort();
 
@@ -24,7 +24,7 @@ namespace BrainStimulator.Utils
             parameters.CopyTo(serialPort);
         }
 
-        public ControlDevice(Parameters _parameters)
+        public DeviceControl(Parameters _parameters)
         {
             serialPort = new SerialPort();
 

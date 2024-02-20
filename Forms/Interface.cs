@@ -8,7 +8,7 @@ namespace SerialPortController
 {
     public partial class Interface : MaterialForm
     {
-        private ControlDevice? _control;
+        private DeviceControl? _control;
         private readonly Parameters? _parameters = new();
         private const string downline = "\r\n";
 
@@ -149,7 +149,7 @@ namespace SerialPortController
             {
                 CopyFieldsValuesToParameters();
                 _parameters!.PortName = cbComPortsList.SelectedItem.ToString();
-                _control = new ControlDevice(_parameters);
+                _control = new DeviceControl(_parameters);
                 _control.InitializeSerialPort();
 
                 SetButtonsState(false);
