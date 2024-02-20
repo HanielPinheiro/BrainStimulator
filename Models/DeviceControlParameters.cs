@@ -1,12 +1,12 @@
 ﻿using System.IO.Ports;
 
-namespace BrainStimulator.Utils
+namespace BrainStimulator.Models
 {
-    public class Parameters
+    public class DeviceControlParameters
     {
-        public Parameters() { SetDefaultConfiguration(); }
+        public DeviceControlParameters() { SetDefaultConfiguration(); }
 
-        public Parameters(Parameters other) { CopyFrom(other); }
+        public DeviceControlParameters(DeviceControlParameters other) { CopyFrom(other); }
 
 
         public string? PortName { get; set; }
@@ -35,7 +35,7 @@ namespace BrainStimulator.Utils
             serialPort.Handshake = HandShake;
         }
 
-        public void CopyFrom(Parameters other)
+        public void CopyFrom(DeviceControlParameters other)
         {
             PortName = other.PortName;
 

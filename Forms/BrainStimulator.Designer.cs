@@ -28,26 +28,23 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BrainStimulator));
             tableLayoutPanel1 = new TableLayoutPanel();
             materialTabControl1 = new MaterialSkin.Controls.MaterialTabControl();
             TabPeriodic = new TabPage();
             tbPanel_PeriodicTab = new TableLayoutPanel();
-            chartPeriodic = new System.Windows.Forms.DataVisualization.Charting.Chart();
             tableLayoutPanel7 = new TableLayoutPanel();
             PeriodicTab_HeaderPanel = new TableLayoutPanel();
             PeriodicTab_AddPulse = new MaterialSkin.Controls.MaterialButton();
             PeriodicTab_RemovePulse = new MaterialSkin.Controls.MaterialButton();
             PeriodicTab_ConnectBoard = new MaterialSkin.Controls.MaterialButton();
             PeriodicTab_GridMain = new DataGridView();
+            PeriodicTab_ChartPlotView = new OxyPlot.WindowsForms.PlotView();
             TabChaotic = new TabPage();
             tableLayoutPanel1.SuspendLayout();
             materialTabControl1.SuspendLayout();
             TabPeriodic.SuspendLayout();
             tbPanel_PeriodicTab.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)chartPeriodic).BeginInit();
             tableLayoutPanel7.SuspendLayout();
             PeriodicTab_HeaderPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)PeriodicTab_GridMain).BeginInit();
@@ -100,8 +97,8 @@
             tbPanel_PeriodicTab.ColumnCount = 1;
             tbPanel_PeriodicTab.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 28.53403F));
             tbPanel_PeriodicTab.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 71.4659653F));
-            tbPanel_PeriodicTab.Controls.Add(chartPeriodic, 0, 1);
             tbPanel_PeriodicTab.Controls.Add(tableLayoutPanel7, 0, 0);
+            tbPanel_PeriodicTab.Controls.Add(PeriodicTab_ChartPlotView, 0, 1);
             tbPanel_PeriodicTab.Dock = DockStyle.Fill;
             tbPanel_PeriodicTab.Location = new Point(3, 3);
             tbPanel_PeriodicTab.Margin = new Padding(0);
@@ -111,28 +108,6 @@
             tbPanel_PeriodicTab.RowStyles.Add(new RowStyle(SizeType.Percent, 59.22921F));
             tbPanel_PeriodicTab.Size = new Size(774, 493);
             tbPanel_PeriodicTab.TabIndex = 1;
-            // 
-            // chartPeriodic
-            // 
-            chartArea1.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
-            chartArea1.AxisX.MajorTickMark.Enabled = false;
-            chartArea1.AxisY.LineWidth = 0;
-            chartArea1.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
-            chartArea1.AxisY.MajorTickMark.Enabled = false;
-            chartArea1.Name = "ChartArea1";
-            chartPeriodic.ChartAreas.Add(chartArea1);
-            chartPeriodic.Dock = DockStyle.Fill;
-            chartPeriodic.Location = new Point(0, 201);
-            chartPeriodic.Margin = new Padding(0);
-            chartPeriodic.Name = "chartPeriodic";
-            series1.BorderWidth = 2;
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.StepLine;
-            series1.Name = "Pulses";
-            chartPeriodic.Series.Add(series1);
-            chartPeriodic.Size = new Size(774, 292);
-            chartPeriodic.TabIndex = 2;
-            chartPeriodic.Text = "chart1";
             // 
             // tableLayoutPanel7
             // 
@@ -250,6 +225,19 @@
             PeriodicTab_GridMain.TabIndex = 1;
             PeriodicTab_GridMain.DataError += PeriodicTab_GridMain_DataError;
             // 
+            // PeriodicTab_ChartPlotView
+            // 
+            PeriodicTab_ChartPlotView.Dock = DockStyle.Fill;
+            PeriodicTab_ChartPlotView.Location = new Point(3, 204);
+            PeriodicTab_ChartPlotView.Name = "PeriodicTab_ChartPlotView";
+            PeriodicTab_ChartPlotView.PanCursor = Cursors.Hand;
+            PeriodicTab_ChartPlotView.Size = new Size(768, 286);
+            PeriodicTab_ChartPlotView.TabIndex = 1;
+            PeriodicTab_ChartPlotView.Text = "plotView1";
+            PeriodicTab_ChartPlotView.ZoomHorizontalCursor = Cursors.SizeWE;
+            PeriodicTab_ChartPlotView.ZoomRectangleCursor = Cursors.SizeNWSE;
+            PeriodicTab_ChartPlotView.ZoomVerticalCursor = Cursors.SizeNS;
+            // 
             // TabChaotic
             // 
             TabChaotic.Location = new Point(4, 24);
@@ -270,11 +258,11 @@
             Name = "BrainStimulator";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Estimulador Cerebral";
+            Load += BrainStimulator_Load;
             tableLayoutPanel1.ResumeLayout(false);
             materialTabControl1.ResumeLayout(false);
             TabPeriodic.ResumeLayout(false);
             tbPanel_PeriodicTab.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)chartPeriodic).EndInit();
             tableLayoutPanel7.ResumeLayout(false);
             PeriodicTab_HeaderPanel.ResumeLayout(false);
             PeriodicTab_HeaderPanel.PerformLayout();
@@ -291,10 +279,10 @@
         private TabPage TabChaotic;
         private TableLayoutPanel tableLayoutPanel7;
         private DataGridView PeriodicTab_GridMain;
-        private System.Windows.Forms.DataVisualization.Charting.Chart chartPeriodic;
         private TableLayoutPanel PeriodicTab_HeaderPanel;
         private MaterialSkin.Controls.MaterialButton PeriodicTab_RemovePulse;
         private MaterialSkin.Controls.MaterialButton PeriodicTab_AddPulse;
         private MaterialSkin.Controls.MaterialButton PeriodicTab_ConnectBoard;
+        private OxyPlot.WindowsForms.PlotView PeriodicTab_ChartPlotView;
     }
 }

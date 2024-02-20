@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Data;
 using System.Reflection;
 
 namespace BrainStimulator.Utils
@@ -9,8 +10,7 @@ namespace BrainStimulator.Utils
         {
             try
             {
-                List<string> descriptions = new();
-
+                List<string> defaultValues = new();
                 FieldInfo[] fields = typeof(T)!.GetFields();
                 foreach (var field in fields)
                 {
@@ -19,10 +19,15 @@ namespace BrainStimulator.Utils
                     if (attribArray.Length == 0) continue;
 
                     foreach (var atrib in attribArray)
-                        if (atrib is DefaultValueAttribute attrib && attrib != null) descriptions.Add(attrib.Value!.ToString()!);
+                        if (atrib is DefaultValueAttribute attrib && attrib != null)
+                        {
+                            var stringNotNull = attrib.Value!.ToString();
+                            if (stringNotNull != null) defaultValues.Add(stringNotNull);
+                        }
+
                 }
 
-                return descriptions;
+                return defaultValues;
             }
             catch (Exception ex) { throw new Exception($"Problem in {nameof(GetFromEnum_DefaultValueAttributes)} - {ex.Message}"); };
         }

@@ -1,9 +1,9 @@
 ﻿using BrainStimulator.Utils;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
+using System.Data;
+using System.Globalization;
 
-namespace BrainStimulator
+namespace BrainStimulator.Models
 {
     /// <summary>
     /// Valência da corrente do pulso (essa é a corrente que vai fluir na carga)
@@ -55,7 +55,7 @@ namespace BrainStimulator
         [DefaultValue("Segundos")]
         Seconds,
         [DefaultValue("Milissegundos")]
-        Miliseconds,
+        Milliseconds,
         [DefaultValue("Microssegundos")]
         Microseconds
     }
@@ -65,27 +65,60 @@ namespace BrainStimulator
     /// </summary>
     internal class Pulse
     {
+        #region Largura do Pulso
+
+        private double _pulseLength = 100;
+
         [DisplayName("Largura do Pulso"), ColumnSize(90)]
-        public int PulseLength { get; set; }
-        [DisplayName("Unidade de medida da largura do pulso"), ColumnSize(120)]
-        public MeasureUnity PulseMeasureUnity { get; set; }
+        public double PulseLength
+        {
+            get { return _pulseLength; }
+            set
+            {
+                var val = double.Parse(value.ToString().Replace(",", "."), CultureInfo.InvariantCulture);
 
+                if (PulseMeasureUnity.Equals(MeasureUnity.Microseconds)) _pulseLength = Math.Round(val, 0);
+                else _pulseLength = val;
+            }
+        }
 
-        [DisplayName("Intervalo entre Pulsos"), ColumnSize(90)]
-        public int AfterPulseLength { get; set; }
-        [DisplayName("Unidade de medida do Intervalo entre pulsos"), ColumnSize(120)]
-        public MeasureUnity AfterPulseMeasureUnity { get; set; }
+        #endregion
 
+        #region Intervalo entre Pulsos
+
+        private double _afterPulseLength = 100;
+
+        [DisplayName("Intervalo entre Pulsos"), ColumnSize(110)]
+        public double AfterPulseLength
+        {
+            get { return _afterPulseLength; }
+            set
+            {
+                var val = double.Parse(value.ToString().Replace(",", "."), CultureInfo.InvariantCulture);
+
+                if (PulseMeasureUnity.Equals(MeasureUnity.Microseconds)) _afterPulseLength = Math.Round(val, 0);
+                else _afterPulseLength = val;
+            }
+        }
+
+        #endregion
+
+        [DisplayName("Unidade de medida da largura do pulso"), ColumnSize(180)]
+        public MeasureUnity PulseMeasureUnity { get; set; } = MeasureUnity.Microseconds;
+
+        [DisplayName("Unidade de medida do Intervalo entre pulsos"), ColumnSize(180)]
+        public MeasureUnity AfterPulseMeasureUnity { get; set; } = MeasureUnity.Milliseconds;
 
         [DisplayName("Corrente [uA]"), ColumnSize(90)]
-        public PulseCurrents Current { get; set; }
+        public PulseCurrents Current { get; set; } = PulseCurrents.Hundred;
+
         [DisplayName("Polaridade [uA]"), ColumnSize(90)]
-        public PulsePolariy Polarity { get; set; }
+        public PulsePolariy Polarity { get; set; } = PulsePolariy.Positive;
 
         #region Static fields
 
-        public static Dictionary<string, string> displayNameFromProperties = ReflectionHandler.GetFromProperties_DisplayNameAttributes<Pulse>();
         public static Dictionary<string, int> columSizeFromProperties = ReflectionHandler.GetFromProperties_ColumnSizeAttribute<Pulse>();
+        public static Dictionary<string, string> displayNameFromProperties = ReflectionHandler.GetFromProperties_DisplayNameAttributes<Pulse>();
         public static List<string> pulsePolarityValues = ReflectionHandler.GetFromEnum_DefaultValueAttributes<PulsePolariy>();
         public static List<string> pulseCurrentValues = ReflectionHandler.GetFromEnum_DefaultValueAttributes<PulseCurrents>();
         public static List<string> measureUnityValues = ReflectionHandler.GetFromEnum_DefaultValueAttributes<MeasureUnity>();
@@ -93,6 +126,6 @@ namespace BrainStimulator
         #endregion
     }
 
-   
-   
+
+
 }

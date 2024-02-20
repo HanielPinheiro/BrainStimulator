@@ -1,12 +1,12 @@
 ﻿using System.IO.Ports;
 
-namespace BrainStimulator.Utils
+namespace BrainStimulator.Models
 {
     public class DeviceControl : IDisposable
     {
         private const int defaultSleep = 1000;
 
-        private readonly Parameters parameters = new Parameters();
+        private readonly DeviceControlParameters parameters = new DeviceControlParameters();
         private readonly SerialPort serialPort;
         public bool IsConnected { get => serialPort!.IsOpen; }
 
@@ -24,7 +24,7 @@ namespace BrainStimulator.Utils
             parameters.CopyTo(serialPort);
         }
 
-        public DeviceControl(Parameters _parameters)
+        public DeviceControl(DeviceControlParameters _parameters)
         {
             serialPort = new SerialPort();
 
@@ -41,7 +41,7 @@ namespace BrainStimulator.Utils
         {
             Dispose();
 
-            parameters.CopyFrom(new Parameters());
+            parameters.CopyFrom(new DeviceControlParameters());
             parameters.CopyTo(serialPort);
 
             InitializeSerialPort();

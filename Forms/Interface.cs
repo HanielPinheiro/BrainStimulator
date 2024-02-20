@@ -1,15 +1,14 @@
-using BrainStimulator.Utils;
+using BrainStimulator.Models;
 using MaterialSkin;
 using MaterialSkin.Controls;
 using System.IO.Ports;
-using static BrainStimulator.BrainStimulator;
 
 namespace SerialPortController
 {
     public partial class Interface : MaterialForm
     {
         private DeviceControl? _control;
-        private readonly Parameters? _parameters = new();
+        private readonly DeviceControlParameters? _parameters = new();
         private const string downline = "\r\n";
 
         public readonly MaterialButton controlButton;
@@ -125,7 +124,7 @@ namespace SerialPortController
         {
             if (savePreviousParams) CopyFieldsValuesToParameters();
 
-            var param = new Parameters();
+            var param = new DeviceControlParameters();
 
             txtBaudRate.Text = param.BaudRate.ToString();
             txtDataBits.Text = param.DataBits.ToString();
