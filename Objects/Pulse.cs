@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using BrainStimulator.Utils;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace BrainStimulator
@@ -6,11 +8,11 @@ namespace BrainStimulator
     /// <summary>
     /// Valência da corrente do pulso (essa é a corrente que vai fluir na carga)
     /// </summary>
-    internal enum PulseValence
+    internal enum PulsePolariy
     {
-        [DefaultValue("Positive")]
+        [DefaultValue("+")]
         Positive,
-        [DefaultValue("Negative")]
+        [DefaultValue("-")]
         Negative
     }
 
@@ -50,11 +52,11 @@ namespace BrainStimulator
     /// </summary>
     internal enum MeasureUnity
     {
-        [DefaultValue("Seconds")]
+        [DefaultValue("Segundos")]
         Seconds,
-        [DefaultValue("Miliseconds")]
+        [DefaultValue("Milissegundos")]
         Miliseconds,
-        [DefaultValue("Microseconds")]
+        [DefaultValue("Microssegundos")]
         Microseconds
     }
 
@@ -63,49 +65,34 @@ namespace BrainStimulator
     /// </summary>
     internal class Pulse
     {
-        public int AfterPulseLength { get; set; }
+        [DisplayName("Largura do Pulso"), ColumnSize(90)]
         public int PulseLength { get; set; }
-
-        public MeasureUnity AfterPulseMeasureUnity { get; set; }
+        [DisplayName("Unidade de medida da largura do pulso"), ColumnSize(120)]
         public MeasureUnity PulseMeasureUnity { get; set; }
 
+
+        [DisplayName("Intervalo entre Pulsos"), ColumnSize(90)]
+        public int AfterPulseLength { get; set; }
+        [DisplayName("Unidade de medida do Intervalo entre pulsos"), ColumnSize(120)]
+        public MeasureUnity AfterPulseMeasureUnity { get; set; }
+
+
+        [DisplayName("Corrente [uA]"), ColumnSize(90)]
         public PulseCurrents Current { get; set; }
-        public PulseValence Valence { get; set; }
+        [DisplayName("Polaridade [uA]"), ColumnSize(90)]
+        public PulsePolariy Polarity { get; set; }
 
-        public static List<string> pulseValenceValues = GetDefaultValueAttributes(typeof(PulseValence));
-        public static List<string> pulseCurrentValues = GetDefaultValueAttributes(typeof(PulseCurrents));
-        public static List<string> measureUnityValues = GetDefaultValueAttributes(typeof(MeasureUnity));
+        #region Static fields
 
+        public static Dictionary<string, string> displayNameFromProperties = ReflectionHandler.GetFromProperties_DisplayNameAttributes<Pulse>();
+        public static Dictionary<string, int> columSizeFromProperties = ReflectionHandler.GetFromProperties_ColumnSizeAttribute<Pulse>();
+        public static List<string> pulsePolarityValues = ReflectionHandler.GetFromEnum_DefaultValueAttributes<PulsePolariy>();
+        public static List<string> pulseCurrentValues = ReflectionHandler.GetFromEnum_DefaultValueAttributes<PulseCurrents>();
+        public static List<string> measureUnityValues = ReflectionHandler.GetFromEnum_DefaultValueAttributes<MeasureUnity>();
 
-        public static List<string> GetDefaultValueAttributes(Type enumType)
-        {
-            try
-            {
-                List<string> descriptions = new List<string>();
-                var properties = enumType.GetProperties();
-                foreach (var property in properties)
-                {
-                    var attribute = property.GetCustomAttributes(typeof(DefaultValueAttribute), true)[0];
-                    if (attribute is DescriptionAttribute descAttribute) descriptions.Add(descAttribute.Description);
-                }
-
-                if (descriptions.Count == 0)
-                {
-                    FieldInfo[] fields = enumType!.GetFields();
-                    foreach (var field in fields)
-                    {
-                        object[] attribArray = field.GetCustomAttributes(false);
-
-                        if (attribArray.Length == 0) continue;
-
-                        foreach (var atrib in attribArray)
-                            if (atrib is DefaultValueAttribute attrib && attrib != null) descriptions.Add(attrib.Value!.ToString()!);
-                    }
-                }
-
-                return descriptions;
-            }
-            catch { throw; };
-        }
+        #endregion
     }
+
+   
+   
 }
