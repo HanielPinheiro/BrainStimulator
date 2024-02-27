@@ -11,11 +11,14 @@ namespace SerialPortController
         private readonly DeviceControlParameters? _parameters = new();
         private const string downline = "\r\n";
 
-        public readonly MaterialButton controlButton;
+        public readonly MaterialButton externalSendDataButton;
+        public readonly MaterialButton externalConnectButton;
 
-        public Interface(MaterialButton btnReference)
+        public Interface(MaterialButton btnConnect, MaterialButton btnSend)
         {
-            controlButton = btnReference;
+            externalConnectButton = btnConnect;
+            externalSendDataButton = btnSend;
+
 
             InitializeComponent();
 
@@ -28,8 +31,6 @@ namespace SerialPortController
             materialSkinManager.ColorScheme = new ColorScheme(Primary.BlueGrey800, Primary.BlueGrey900, Primary.BlueGrey500, Accent.LightBlue200, TextShade.WHITE);
 
             #endregion
-
-            RefreshCom();
 
             #region Set combo boxes
 
@@ -47,6 +48,7 @@ namespace SerialPortController
 
             #endregion
 
+            RefreshCom();
             FillFieldsWithDefaultData(false);
             DisableFields();
         }
@@ -168,7 +170,32 @@ namespace SerialPortController
         private void SetButtonsState(bool value)
         {
             btnConnect.Enabled = value;
+            externalSendDataButton.Enabled = !value;
             btnDisconnect.Enabled = !value;
+        }
+
+        #endregion
+
+        #region Form Closed / Closing
+
+        private void Interface_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            externalConnectButton.Enabled = true;
+            externalSendDataButton.Enabled = false;
+
+            if (_control != null) try { _control!.Dispose(); } catch { /* Ignorado */ }
+        }
+
+        private void Interface_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (_control != null && _control!.IsConnected)
+            {
+                string message = $"Você realmente deseja fechar esta janela? {downline}{downline} Isso irá cortar a comunicação com o estimulador.";
+                string caption = "Fechar Interface";
+                var result = MessageBox.Show(message, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (result == DialogResult.No) e.Cancel = true;
+            }
         }
 
         #endregion
@@ -216,24 +243,6 @@ namespace SerialPortController
         private void Error(string errorMessage, Exception e)
         {
             MessageBox.Show($"{errorMessage} {downline}{downline}Exception message:{downline} {e.Message}", "Erro!", MessageBoxButtons.OK, MessageBoxIcon.Error); ;
-        }
-
-        private void Interface_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            controlButton.Enabled = true;
-            if (_control != null) try { _control!.Dispose(); } catch { /* Ignorado */ }
-        }
-
-        private void Interface_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (_control != null && _control!.IsConnected)
-            {
-                string message = $"Você realmente deseja fechar esta janela? {downline}{downline} Isso irá cortar a comunicação com o estimulador.";
-                string caption = "Fechar Interface";
-                var result = MessageBox.Show(message, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-                if (result == DialogResult.No) e.Cancel = true;
-            }
         }
     }
 }

@@ -38,6 +38,7 @@
             PeriodicTab_AddPulse = new MaterialSkin.Controls.MaterialButton();
             PeriodicTab_RemovePulse = new MaterialSkin.Controls.MaterialButton();
             PeriodicTab_ConnectBoard = new MaterialSkin.Controls.MaterialButton();
+            PeriodicTab_SendConfigToBoard = new MaterialSkin.Controls.MaterialButton();
             PeriodicTab_GridMain = new DataGridView();
             PeriodicTab_ChartPlotView = new OxyPlot.WindowsForms.PlotView();
             TabChaotic = new TabPage();
@@ -129,14 +130,15 @@
             // 
             // PeriodicTab_HeaderPanel
             // 
-            PeriodicTab_HeaderPanel.ColumnCount = 3;
-            PeriodicTab_HeaderPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            PeriodicTab_HeaderPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            PeriodicTab_HeaderPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            PeriodicTab_HeaderPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            PeriodicTab_HeaderPanel.ColumnCount = 4;
+            PeriodicTab_HeaderPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            PeriodicTab_HeaderPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            PeriodicTab_HeaderPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            PeriodicTab_HeaderPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
             PeriodicTab_HeaderPanel.Controls.Add(PeriodicTab_AddPulse, 0, 0);
             PeriodicTab_HeaderPanel.Controls.Add(PeriodicTab_RemovePulse, 1, 0);
             PeriodicTab_HeaderPanel.Controls.Add(PeriodicTab_ConnectBoard, 2, 0);
+            PeriodicTab_HeaderPanel.Controls.Add(PeriodicTab_SendConfigToBoard, 3, 0);
             PeriodicTab_HeaderPanel.Dock = DockStyle.Fill;
             PeriodicTab_HeaderPanel.Location = new Point(0, 0);
             PeriodicTab_HeaderPanel.Margin = new Padding(0);
@@ -154,7 +156,7 @@
             PeriodicTab_AddPulse.Depth = 0;
             PeriodicTab_AddPulse.HighEmphasis = true;
             PeriodicTab_AddPulse.Icon = null;
-            PeriodicTab_AddPulse.Location = new Point(50, 6);
+            PeriodicTab_AddPulse.Location = new Point(18, 6);
             PeriodicTab_AddPulse.Margin = new Padding(4, 6, 4, 6);
             PeriodicTab_AddPulse.MouseState = MaterialSkin.MouseState.HOVER;
             PeriodicTab_AddPulse.Name = "PeriodicTab_AddPulse";
@@ -175,7 +177,7 @@
             PeriodicTab_RemovePulse.Depth = 0;
             PeriodicTab_RemovePulse.HighEmphasis = true;
             PeriodicTab_RemovePulse.Icon = null;
-            PeriodicTab_RemovePulse.Location = new Point(311, 6);
+            PeriodicTab_RemovePulse.Location = new Point(215, 6);
             PeriodicTab_RemovePulse.Margin = new Padding(4, 6, 4, 6);
             PeriodicTab_RemovePulse.MouseState = MaterialSkin.MouseState.HOVER;
             PeriodicTab_RemovePulse.Name = "PeriodicTab_RemovePulse";
@@ -196,12 +198,12 @@
             PeriodicTab_ConnectBoard.Depth = 0;
             PeriodicTab_ConnectBoard.HighEmphasis = true;
             PeriodicTab_ConnectBoard.Icon = null;
-            PeriodicTab_ConnectBoard.Location = new Point(545, 6);
+            PeriodicTab_ConnectBoard.Location = new Point(390, 6);
             PeriodicTab_ConnectBoard.Margin = new Padding(4, 6, 4, 6);
             PeriodicTab_ConnectBoard.MouseState = MaterialSkin.MouseState.HOVER;
             PeriodicTab_ConnectBoard.Name = "PeriodicTab_ConnectBoard";
             PeriodicTab_ConnectBoard.NoAccentTextColor = Color.Empty;
-            PeriodicTab_ConnectBoard.Size = new Size(197, 31);
+            PeriodicTab_ConnectBoard.Size = new Size(185, 31);
             PeriodicTab_ConnectBoard.TabIndex = 7;
             PeriodicTab_ConnectBoard.Text = "Conectar com a placa";
             PeriodicTab_ConnectBoard.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
@@ -209,12 +211,34 @@
             PeriodicTab_ConnectBoard.UseVisualStyleBackColor = true;
             PeriodicTab_ConnectBoard.Click += PeriodicTab_ConnectBoard_Click;
             // 
+            // PeriodicTab_SendConfigToBoard
+            // 
+            PeriodicTab_SendConfigToBoard.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
+            PeriodicTab_SendConfigToBoard.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            PeriodicTab_SendConfigToBoard.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            PeriodicTab_SendConfigToBoard.Depth = 0;
+            PeriodicTab_SendConfigToBoard.Enabled = false;
+            PeriodicTab_SendConfigToBoard.HighEmphasis = true;
+            PeriodicTab_SendConfigToBoard.Icon = null;
+            PeriodicTab_SendConfigToBoard.Location = new Point(583, 6);
+            PeriodicTab_SendConfigToBoard.Margin = new Padding(4, 6, 4, 6);
+            PeriodicTab_SendConfigToBoard.MouseState = MaterialSkin.MouseState.HOVER;
+            PeriodicTab_SendConfigToBoard.Name = "PeriodicTab_SendConfigToBoard";
+            PeriodicTab_SendConfigToBoard.NoAccentTextColor = Color.Empty;
+            PeriodicTab_SendConfigToBoard.Size = new Size(187, 31);
+            PeriodicTab_SendConfigToBoard.TabIndex = 8;
+            PeriodicTab_SendConfigToBoard.Text = "Enviar Config à placa";
+            PeriodicTab_SendConfigToBoard.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+            PeriodicTab_SendConfigToBoard.UseAccentColor = false;
+            PeriodicTab_SendConfigToBoard.UseVisualStyleBackColor = true;
+            // 
             // PeriodicTab_GridMain
             // 
             PeriodicTab_GridMain.AllowUserToAddRows = false;
             PeriodicTab_GridMain.AllowUserToDeleteRows = false;
             PeriodicTab_GridMain.AllowUserToOrderColumns = true;
             PeriodicTab_GridMain.AllowUserToResizeRows = false;
+            PeriodicTab_GridMain.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             PeriodicTab_GridMain.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             PeriodicTab_GridMain.Dock = DockStyle.Fill;
             PeriodicTab_GridMain.Location = new Point(0, 43);
@@ -223,6 +247,8 @@
             PeriodicTab_GridMain.RowTemplate.Height = 25;
             PeriodicTab_GridMain.Size = new Size(774, 158);
             PeriodicTab_GridMain.TabIndex = 1;
+            PeriodicTab_GridMain.CellEndEdit += PeriodicTab_GridMain_CellEndEdit;
+            PeriodicTab_GridMain.ColumnDataPropertyNameChanged += PeriodicTab_GridMain_ColumnDataPropertyNameChanged;
             PeriodicTab_GridMain.DataError += PeriodicTab_GridMain_DataError;
             // 
             // PeriodicTab_ChartPlotView
@@ -284,5 +310,6 @@
         private MaterialSkin.Controls.MaterialButton PeriodicTab_AddPulse;
         private MaterialSkin.Controls.MaterialButton PeriodicTab_ConnectBoard;
         private OxyPlot.WindowsForms.PlotView PeriodicTab_ChartPlotView;
+        private MaterialSkin.Controls.MaterialButton PeriodicTab_SendConfigToBoard;
     }
 }

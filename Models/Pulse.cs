@@ -1,70 +1,34 @@
 ﻿using BrainStimulator.Utils;
 using System.ComponentModel;
-using System.Data;
 using System.Globalization;
 
 namespace BrainStimulator.Models
 {
     /// <summary>
-    /// Valência da corrente do pulso (essa é a corrente que vai fluir na carga)
+    /// Classe que define o objeto Pulse que aparece no grid
     /// </summary>
-    internal enum PulsePolariy
+    public class Pulse
     {
-        [DefaultValue("+")]
-        Positive,
-        [DefaultValue("-")]
-        Negative
-    }
+        #region Static fields
 
-    /// <summary>
-    /// Pulsos de correntes em Micro Ampéres (uA) que o estimulador é capaz de reproduzir
-    /// </summary>
-    internal enum PulseCurrents
-    {
-        [DefaultValue(50)]
-        Fifty,
-        [DefaultValue(100)]
-        Hundred,
-        [DefaultValue(150)]
-        HundredFifty,
-        [DefaultValue(200)]
-        TwoHundred,
-        [DefaultValue(250)]
-        TwoHundredFifty,
-        [DefaultValue(300)]
-        ThreeHundred,
-        [DefaultValue(350)]
-        ThreeHundredFifty,
-        [DefaultValue(400)]
-        FourHundred,
-        [DefaultValue(450)]
-        FourHundredFifty,
-        [DefaultValue(500)]
-        FiveHundred,
-        [DefaultValue(550)]
-        FiveHundredFifty,
-        [DefaultValue(600)]
-        SixHundred
-    }
+        public static Dictionary<string, int> columSizeFromProperties = ReflectionHandler.GetFromProperties_ColumnSizeAttribute<Pulse>();
+        public static Dictionary<string, string> displayNameFromProperties = ReflectionHandler.GetFromProperties_DisplayNameAttributes<Pulse>();
 
-    /// <summary>
-    /// Valência da corrente do pulso (essa é a corrente que vai fluir na carga)
-    /// </summary>
-    internal enum MeasureUnity
-    {
-        [DefaultValue("Segundos")]
-        Seconds,
-        [DefaultValue("Milissegundos")]
-        Milliseconds,
-        [DefaultValue("Microssegundos")]
-        Microseconds
-    }
+        public static Dictionary<PulsePolariy, string> pulsePolarityToCombobox = ReflectionHandler.GetFromEnum_DescriptionAttributes<PulsePolariy>();
+        public static Dictionary<PulseCurrents, string> pulseCurrentToCombobox = ReflectionHandler.GetFromEnum_DescriptionAttributes<PulseCurrents>();
+        public static Dictionary<MeasureUnity, string> measureUnityToCombobox = ReflectionHandler.GetFromEnum_DescriptionAttributes<MeasureUnity>();
 
-    /// <summary>
-    /// Classe que define o objeto Pulse que aparece no gráfico
-    /// </summary>
-    internal class Pulse
-    {
+        public static Dictionary<PulsePolariy, double> pulsePolarityValues = ReflectionHandler.GetFromEnum_DefaultValueAttributes<PulsePolariy>();
+        public static Dictionary<PulseCurrents, double> pulseCurrentValues = ReflectionHandler.GetFromEnum_DefaultValueAttributes<PulseCurrents>();
+        public static Dictionary<MeasureUnity, double> measureUnityValues = ReflectionHandler.GetFromEnum_DefaultValueAttributes<MeasureUnity>();
+
+        public static string Layout = $"|{nameof(Pulse.PulseLength)}|{nameof(Pulse.PulseMeasureUnity)}|{nameof(Pulse.AfterPulseLength)}"
+                                    + $"|{nameof(Pulse.AfterPulseMeasureUnity)}|{nameof(Pulse.Current)}|{nameof(Pulse.Polarity)}";
+
+        #endregion
+
+        public Pulse(){}
+
         #region Largura do Pulso
 
         private double _pulseLength = 100;
@@ -76,7 +40,6 @@ namespace BrainStimulator.Models
             set
             {
                 var val = double.Parse(value.ToString().Replace(",", "."), CultureInfo.InvariantCulture);
-
                 if (PulseMeasureUnity.Equals(MeasureUnity.Microseconds)) _pulseLength = Math.Round(val, 0);
                 else _pulseLength = val;
             }
@@ -95,7 +58,6 @@ namespace BrainStimulator.Models
             set
             {
                 var val = double.Parse(value.ToString().Replace(",", "."), CultureInfo.InvariantCulture);
-
                 if (PulseMeasureUnity.Equals(MeasureUnity.Microseconds)) _afterPulseLength = Math.Round(val, 0);
                 else _afterPulseLength = val;
             }
@@ -104,28 +66,16 @@ namespace BrainStimulator.Models
         #endregion
 
         [DisplayName("Unidade de medida da largura do pulso"), ColumnSize(180)]
-        public MeasureUnity PulseMeasureUnity { get; set; } = MeasureUnity.Microseconds;
+        public string PulseMeasureUnity { get; set; } = measureUnityToCombobox[MeasureUnity.Microseconds];
 
         [DisplayName("Unidade de medida do Intervalo entre pulsos"), ColumnSize(180)]
-        public MeasureUnity AfterPulseMeasureUnity { get; set; } = MeasureUnity.Milliseconds;
+        public string AfterPulseMeasureUnity { get; set; } = measureUnityToCombobox[MeasureUnity.Milliseconds];
 
         [DisplayName("Corrente [uA]"), ColumnSize(90)]
-        public PulseCurrents Current { get; set; } = PulseCurrents.Hundred;
+        public string Current { get; set; } = pulseCurrentToCombobox[PulseCurrents.Hundred];
 
         [DisplayName("Polaridade [uA]"), ColumnSize(90)]
-        public PulsePolariy Polarity { get; set; } = PulsePolariy.Positive;
-
-        #region Static fields
-
-        public static Dictionary<string, int> columSizeFromProperties = ReflectionHandler.GetFromProperties_ColumnSizeAttribute<Pulse>();
-        public static Dictionary<string, string> displayNameFromProperties = ReflectionHandler.GetFromProperties_DisplayNameAttributes<Pulse>();
-        public static List<string> pulsePolarityValues = ReflectionHandler.GetFromEnum_DefaultValueAttributes<PulsePolariy>();
-        public static List<string> pulseCurrentValues = ReflectionHandler.GetFromEnum_DefaultValueAttributes<PulseCurrents>();
-        public static List<string> measureUnityValues = ReflectionHandler.GetFromEnum_DefaultValueAttributes<MeasureUnity>();
-
-        #endregion
+        public string Polarity { get; set; } = pulsePolarityToCombobox[PulsePolariy.Positive];        
     }
-
-
 
 }

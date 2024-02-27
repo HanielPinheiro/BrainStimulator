@@ -1,4 +1,5 @@
 using BrainStimulator.Models;
+using BrainStimulator.Utils;
 using MaterialSkin;
 using MaterialSkin.Controls;
 using OxyPlot;
@@ -15,10 +16,11 @@ namespace BrainStimulator
         private Interface? boardConnection;
         private MaterialSkinManager materialSkinManager = MaterialSkinManager.Instance;
         private DataGridViewCellStyle? DefaultCellStyle;
+        private const string downline = "\r\n";
+
         public BrainStimulator()
         {
             InitializeComponent();
-
             SetFormTheme();
         }
 
@@ -37,57 +39,45 @@ namespace BrainStimulator
                 ForeColor = materialSkinManager.ColorScheme.TextColor,
                 SelectionBackColor = materialSkinManager.ColorScheme.PrimaryColor,
                 SelectionForeColor = materialSkinManager.ColorScheme.TextColor,
+                Alignment = DataGridViewContentAlignment.MiddleCenter,
             };
         }
-
 
         private void BrainStimulator_Load(object sender, EventArgs e)
         {
             PeriodicTab_SetChart();
-
-            PeriodicTab_GridMain.DataSource = pulses;
-            PeriodicTab_GridMain.AutoGenerateColumns = false;
-            PeriodicTab_SetColumnsToGrid();
-        }
-
-        private void PeriodicTab_SetColumnsToGrid()
-        {
-            List<DataGridViewColumn> columns = new();
-
-            foreach (DataGridViewColumn item in PeriodicTab_GridMain.Columns)
-            {
-                switch (item.DataPropertyName)
-                {
-
-                    case nameof(Pulse.AfterPulseMeasureUnity):
-                    case nameof(Pulse.PulseMeasureUnity):
-                        columns.Add(GenerateComboBoxColumn(item.Name, Pulse.measureUnityValues));
-                        break;
-
-                    case nameof(Pulse.Current):
-                        columns.Add(GenerateComboBoxColumn(item.Name, Pulse.pulseCurrentValues));
-                        break;
-
-                    case nameof(Pulse.Polarity):
-                        columns.Add(GenerateComboBoxColumn(item.Name, Pulse.pulsePolarityValues));
-                        break;
-
-                    default:
-                        item.HeaderText = Pulse.displayNameFromProperties.GetValueOrDefault(item.DataPropertyName);
-                        item.Width = Pulse.columSizeFromProperties.GetValueOrDefault(item.DataPropertyName);
-                        item.DefaultCellStyle = DefaultCellStyle;
-                        columns.Add(item);
-                        break;
-                }
-            }
-
-            PeriodicTab_GridMain.Columns.Clear();
-            PeriodicTab_GridMain.Columns.AddRange(columns.ToArray());
+            PeriodicTab_GridMain.DefaultConfiguration(pulses, () => PeriodicTab_GridMain.SetPersistString(this.GetType().FullName + Pulse.Layout));
+            PeriodicTab_GridMain.SetCellStyle(DefaultCellStyle!);
+            PeriodicTab_GridMain.SetHeaderText(Pulse.displayNameFromProperties);
+            PeriodicTab_GridMain.SetWidth(Pulse.columSizeFromProperties);
         }
 
         #endregion
 
-        #region Charts        
+        #region Charts
+
+        private void RefreshChart()
+        {
+            try
+            {
+                PlotModel model = GetModel();
+                LineSeries? lineSeries = model.Series[0] as LineSeries;
+                PulseLikeDataPoint chartPoints;
+                PulseLikeDataPoint? predecessor = null;
+
+                foreach (DataGridViewRow row in PeriodicTab_GridMain.Rows)
+                    if (row.DataBoundItem is Pulse pulse)
+                    {
+                        chartPoints = new PulseLikeDataPoint();
+                        chartPoints.SetDataPointsFrom(pulse, lineSeries!, predecessor);
+                        predecessor = chartPoints;
+                    }
+
+                PeriodicTab_ChartPlotView.Model = model;
+            }
+            catch (Exception ex) { Error($"Problema ao tentar executar {nameof(RefreshChart)}", ex); }
+        }
+
 
         private PlotModel GetModel()
         {
@@ -107,47 +97,6 @@ namespace BrainStimulator
             return model;
         }
 
-        private void SetPoints()
-        {
-            var model = GetModel();
-            LineSeries? lineSeries = model.Series[0] as LineSeries;
-            lineSeries!.Points.Add(new OxyPlot.DataPoint(0, 0));
-            lineSeries!.Points.Add(new OxyPlot.DataPoint(10, 4));
-            lineSeries!.Points.Add(new OxyPlot.DataPoint(30, 2));
-            lineSeries!.Points.Add(new OxyPlot.DataPoint(40, 12));
-            PeriodicTab_ChartPlotView.Model = model;
-        }
-
-        #endregion
-
-        #region GenerateComboBoxColumn
-
-        private DataGridViewComboBoxColumn GenerateComboBoxColumn(string name, List<string> values)
-        {
-            DataTable defaultValues = new();
-            defaultValues.Columns.Add("Id", typeof(string));
-            defaultValues.Columns.Add("Item", typeof(string));
-            foreach (string item in values) defaultValues.Rows.Add(name, item);
-
-            DataGridViewComboBoxColumn col = new()
-            {
-                Name = name,
-                DataPropertyName = name,
-
-                DataSource = defaultValues,
-                DisplayMember = "Id",
-                ValueMember = "Item",
-
-                DisplayStyle = DataGridViewComboBoxDisplayStyle.ComboBox,
-                DefaultCellStyle = DefaultCellStyle,
-                DisplayStyleForCurrentCellOnly = true,
-
-                HeaderText = Pulse.displayNameFromProperties.GetValueOrDefault(name),
-                Width = Pulse.columSizeFromProperties.GetValueOrDefault(name)
-            };
-            return col;
-        }
-
         #endregion
 
         #region Periodic Tab
@@ -156,8 +105,9 @@ namespace BrainStimulator
 
         private void PeriodicTab_AddPulse_Click(object sender, EventArgs e)
         {
-            SetPoints();
-            pulses.Add(new Pulse());
+            var p = new Pulse();
+            pulses.Add(p);
+            RefreshChart();
         }
 
         private void PeriodicTab_RemovePulse_Click(object sender, EventArgs e)
@@ -168,15 +118,15 @@ namespace BrainStimulator
                 if (PeriodicTab_GridMain.Rows[cell.RowIndex].DataBoundItem is Pulse pulse) pulsesToRemove.Add(pulse);
 
             foreach (Pulse pulse in pulsesToRemove) pulses.Remove(pulse);
-        }
 
-        public delegate void Callback(string message);
+            RefreshChart();
+        }
 
         private void PeriodicTab_ConnectBoard_Click(object sender, EventArgs e)
         {
             if (Application.OpenForms.OfType<Interface>().Count() == 0)
             {
-                boardConnection = new Interface(PeriodicTab_ConnectBoard);
+                boardConnection = new Interface(PeriodicTab_ConnectBoard, PeriodicTab_SendConfigToBoard);
                 boardConnection.Show();
                 PeriodicTab_ConnectBoard.Enabled = false;
             }
@@ -190,15 +140,48 @@ namespace BrainStimulator
             PeriodicTab_ChartPlotView.Model = GetModel();
         }
 
-
         private void PeriodicTab_GridMain_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
             // Ignore
         }
 
+        private void PeriodicTab_GridMain_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            RefreshChart();
+        }
+
+        private void PeriodicTab_GridMain_ColumnDataPropertyNameChanged(object sender, DataGridViewColumnEventArgs e)
+        {
+            switch (e.Column.DataPropertyName)
+            {
+                case nameof(Pulse.AfterPulseMeasureUnity):
+                case nameof(Pulse.PulseMeasureUnity):
+                    (sender as DataGridView)!.ConvertColumnToComboBox(e, DataToCombobox.GetListFrom(Pulse.measureUnityToCombobox.Select(p => p.Value).ToList()), "Name", "Name");
+                    break;
+
+                case nameof(Pulse.Current):
+                    (sender as DataGridView)!.ConvertColumnToComboBox(e, DataToCombobox.GetListFrom(Pulse.pulseCurrentToCombobox.Select(p => p.Value).ToList()), "Name", "Name");
+                    break;
+
+                case nameof(Pulse.Polarity):
+                    (sender as DataGridView)!.ConvertColumnToComboBox(e, DataToCombobox.GetListFrom(Pulse.pulsePolarityToCombobox.Select(p => p.Value).ToList()), "Name", "Name");
+                    break;
+
+                default:
+                    (sender as DataGridView)!.ConvertColumnDefault(e);
+                    break;
+            }
+        }
+
         #endregion
 
+        private void Error(string errorMessage, Exception e)
+        {
+            MessageBox.Show($"{errorMessage} {downline}{downline}Exception message:{downline} {e.Message}", "Erro!", MessageBoxButtons.OK, MessageBoxIcon.Error); ;
+        }
 
 
     }
+
+
 }
