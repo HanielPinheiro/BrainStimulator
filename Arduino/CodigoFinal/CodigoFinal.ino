@@ -85,6 +85,7 @@ int main()
 //===============================================================================
 
 void MonitoringSerialData() {
+  
   while (Serial.available() > 0) {
     Control_IncomingChar = Serial.read();
     Serial.write(SUCCESS);
@@ -92,18 +93,18 @@ void MonitoringSerialData() {
     switch (Control_IncomingChar)
     {
       case CONTROL_BOARD_WAIT_INSTRUCTION:
-        IsReceiving = true;
-        ReceivingInstructions();
-        IsReceiving = false;
+        IsReceiving = !IsReceiving; 
         
-        HasInstructions = true;
-        
-        Serial.write("INSTRUCTED");
+        if(IsReceiving){ Serial.write("RECEIVING");}
+        else
+        {
+          Serial.write("RECEIVED");
+          HasInstructions = true;
+        }
         break;
 
       case CONTROL_BOARD_RESET_INSTRUCTION:
-        for (int i = 0; i < CONTROL_SERIAL_NUMCHARS; i++)
-        {  Control_Instructions[i] = 0; }
+        for (int i = 0; i < CONTROL_SERIAL_NUMCHARS; i++){  Control_Instructions[i] = 0; }
           
         HasInstructions = false;
         
@@ -111,38 +112,38 @@ void MonitoringSerialData() {
         break;
 
       default:
+        if(IsReceiving)
+        {
+          if(!HasInstructions)
+          {
+            switch (Control_IncomingChar)
+            {
+               case CONTROL_INSTRUCTION_CURRENT:
+               break;
+          
+                case CONTROL_INSTRUCTION_POLARITY:
+               break;
+          
+                case CONTROL_INSTRUCTION_PULSE_LENGTH:
+               break;
+          
+                case CONTROL_INSTRUCTION_AFTER_PULSE_LENGTH:
+               break;
+          
+                case CONTROL_INSTRUCTION_UNITY_MS:
+               break;
+          
+                case CONTROL_INSTRUCTION_UNITY_US:
+               break;
+            }
+          }
+        }
+        
         break;
     }
+    
   }
-}
-
-//===============================================================================
-//                             WAIT_INSTRUCTION
-//===============================================================================
-
-void ReceivingInstructions()
-{
-  Control_IncomingChar = Serial.read();
-  switch (Control_IncomingChar)
-  {
-     case CONTROL_INSTRUCTION_CURRENT:
-     break;
-
-      case CONTROL_INSTRUCTION_POLARITY:
-     break;
-
-      case CONTROL_INSTRUCTION_PULSE_LENGTH:
-     break;
-
-      case CONTROL_INSTRUCTION_AFTER_PULSE_LENGTH:
-     break;
-
-      case CONTROL_INSTRUCTION_UNITY_MS:
-     break;
-
-      case CONTROL_INSTRUCTION_UNITY_US:
-     break;
-  }
+  
 }
 
 //===============================================================================
