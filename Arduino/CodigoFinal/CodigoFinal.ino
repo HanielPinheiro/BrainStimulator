@@ -75,38 +75,34 @@ char tempData[buffer];
 
 int pulseCounter = 0;
 const int numOfPulses = 10;
-int Currents[numOfPulses];                            // listed currents above
+int Currents[numOfPulses];                           // listed currents above
 int Polarities[numOfPulses];                         //+1 or -1
 double PulseLengths[numOfPulses];                    //time of pulse length
-double InterpulseLengths[numOfPulses];               //time of interpulse interval
+char InterpulseLengths[numOfPulses];               //time of interpulse interval
 double PulseLengthsMeasure[numOfPulses];             //time of pulse length
-double InterpulseLengthsMeasure[numOfPulses];        //time of interpulse interval
+char InterpulseLengthsMeasure[numOfPulses];        //time of interpulse interval
 char measureUnity;
 //===============================================================================
 //                              Main Func
 //===============================================================================
 void setup() {
-  //InitializeDelayCounterAndSetClockPins(); //arquivo .S
+  InitializeDelayCounterAndSetClockPins(); //arquivo .S
 
   Digipot_CurrentValue = DIGIPOT_UNKNOWN;
   pinMode(DIGIPOT_INC_PIN, OUTPUT);
   pinMode(DIGIPOT_UD_PIN, OUTPUT);
   pinMode(DIGIPOT_CS_PIN, OUTPUT);
   digitalWrite(DIGIPOT_CS_PIN, HIGH);
-
+  
   Serial.begin(115200);
   Serial.print("Stimulator is ready");
 }
+
 void loop()
 {
   MonitoringSerialData();
-  if (IsReading)
-  {
-//    Serial.println("Reading");
-    ReceivingInstruction();
-  }
+  if (IsReading) ReceivingInstruction();  
   else if (IsRunning) RunRoutine();
-
 }
 
 //===============================================================================
@@ -114,6 +110,85 @@ void loop()
 //===============================================================================
 
 void RunRoutine() {
+  for(int i =0; i < pulseCounter; i++)
+  {
+     Serial.println("Running");
+    SetCurrentBasedOnNominalCurrent(Currents[i]);
+  //      Delay_1us;
+        if(Polarities[i] == 1){} //Seta o pino do clock1
+    else{} //Seta o pino do clock 2
+//        Delay_1us;
+    Wait(PulseLengths[i],  InterpulseLengths[i]); //pulse length
+
+    Wait(PulseLengthsMeasure[i],  InterpulseLengthsMeasure[i]); //pulse length
+  }  
+}
+
+void SetCurrentBasedOnNominalCurrent(int nominal)
+{
+  switch(nominal)
+    {
+      case NOMINAL_650:
+        SetPotentiometerValue(CURRENT_650);
+        break;
+      case NOMINAL_600: 
+          SetPotentiometerValue(CURRENT_600);
+        break;
+        case NOMINAL_550:
+            SetPotentiometerValue(CURRENT_550);
+        break;
+      case NOMINAL_500:
+          SetPotentiometerValue(CURRENT_500);
+        break;
+      case NOMINAL_450:
+          SetPotentiometerValue(CURRENT_450);
+        break;
+      case NOMINAL_400: 
+          SetPotentiometerValue(CURRENT_400);
+        break;
+      case NOMINAL_350:
+          SetPotentiometerValue(CURRENT_350);
+        break;
+      case NOMINAL_300:
+          SetPotentiometerValue(CURRENT_300);
+        break;
+      case NOMINAL_250:
+          SetPotentiometerValue(CURRENT_250);
+        break;
+      case NOMINAL_200:
+          SetPotentiometerValue(CURRENT_200);
+        break;
+        case NOMINAL_150:
+            SetPotentiometerValue(CURRENT_150);
+        break;
+        case NOMINAL_100:
+            SetPotentiometerValue(CURRENT_100);
+        break;
+        case NOMINAL_50:
+            SetPotentiometerValue(CURRENT_50);
+        break;
+    }
+}
+
+void Wait(int time, char timeUnity)
+{
+    double integral;
+  double fractional;
+  if(timeUnity == INSTRUCTION_UNITY_US)
+      DelayUs (time);
+    else if(timeUnity == INSTRUCTION_UNITY_MS)
+  {
+      fractional = modf(time, &integral);
+      DelayMs(integral);
+      DelayUs(fractional;
+  }
+      else if(timeUnity == INSTRUCTION_UNITY_S)
+      {
+         fractional = modf(time, &integral);
+      DelayS(integral);
+      DelayMs(fractional;
+      }
+      else Serial.println("ERROR: Problem in wait function");
 }
 
 //===============================================================================
@@ -215,7 +290,7 @@ void HandleControlData() {
 //Exemplo: 50$-$0.5S$787.48M>
 //Exemplo: 150$-$43.4U$7.28S>
 void ReceivingInstruction() {
-
+  Serial.println("Reading");
   while (Serial.available() > 0) {
 
     int readedBytes = Serial.readBytesUntil(INSTRUCTION_END, tempData, buffer);
@@ -229,8 +304,7 @@ void ReceivingInstruction() {
       else {
         // get the first part - the current  ==================================
         char* strtokIndx = strtok(tempData, INSTRUCTION_SEPARATOR);
-        int tempCurrent = atoi(strtokIndx);
-        //      Serial.print("Current: ");  Serial.println(tempCurrent);
+        int tempCurrent = atoi(strtokIndx);        
         Currents[pulseCounter] = tempCurrent;
 
         // get the second part - the polarity ==================================
@@ -240,25 +314,21 @@ void ReceivingInstruction() {
         strcpy(polarity, strtokIndx);  // copy it to messageFromPC
         if (polarity[0] == INSTRUCTION_POLARITY_P) tempPolarity = 1;
         if (polarity[0] == INSTRUCTION_POLARITY_N) tempPolarity = -1;
-        //      Serial.print("Polarity: ");  Serial.println(tempPolarity);
         Polarities[pulseCounter] = tempPolarity;
 
         // get the third part - the pulse length  ==================================
         strtokIndx = strtok(NULL, INSTRUCTION_SEPARATOR);
-        float timeConverted = GetTimeFromInstruction(strtokIndx);
-        //      Serial.print("Pulse Length: "); Serial.println(timeConverted);
-        //      Serial.print("Measure Unity: "); Serial.println(measureUnity);
+        float timeConverted = GetTimeFromInstruction(strtokIndx);     
         PulseLengths[pulseCounter] = timeConverted;
         PulseLengthsMeasure[pulseCounter] = measureUnity;
 
         // get the fourth part - the interpulse length  ==================================
         strtokIndx = strtok(NULL, INSTRUCTION_SEPARATOR);
-        timeConverted = GetTimeFromInstruction(strtokIndx);
-        //      Serial.print("Pulse Length: "); Serial.println(timeConverted);
-        //      Serial.print("Measure Unity: "); Serial.println(measureUnity);
+        timeConverted = GetTimeFromInstruction(strtokIndx);       
         InterpulseLengths[pulseCounter] = timeConverted;
         InterpulseLengthsMeasure[pulseCounter] = measureUnity;
 
+        Serial.print(pulseCounter); Serial.print(": ");
         Serial.print(Currents[pulseCounter]); Serial.print(" - ");
         Serial.print(Polarities[pulseCounter]); Serial.print(" - ");
         Serial.print(PulseLengths[pulseCounter]); Serial.print(" - ");
@@ -269,9 +339,7 @@ void ReceivingInstruction() {
         pulseCounter++;
       }
     }
-
     ResetBuffer();
-
   }
 }
 
