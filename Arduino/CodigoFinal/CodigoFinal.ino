@@ -115,8 +115,8 @@ void RunRoutine() {
      Serial.println("Running");
     SetCurrentBasedOnNominalCurrent(Currents[i]);
   //      Delay_1us;
-        if(Polarities[i] == 1){} //Seta o pino do clock1
-    else{} //Seta o pino do clock 2
+        if(Polarities[i] == 1){Set_Pin11_High;Set_Pin12_Low;} //Seta o pino do clock1
+    else{Set_Pin12_High;Set_Pin11_Low;} //Seta o pino do clock 2
 //        Delay_1us;
     Wait(PulseLengths[i],  InterpulseLengths[i]); //pulse length
 
