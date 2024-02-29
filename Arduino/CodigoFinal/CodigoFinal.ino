@@ -1,4 +1,7 @@
-//#include "arduino_aux.h"
+#include "arduino_aux.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define DIGIPOT_UP HIGH
 #define DIGIPOT_DOWN LOW
@@ -25,6 +28,20 @@
 #define CURRENT_100 15
 #define CURRENT_50 11
 
+#define NOMINAL_650 650
+#define NOMINAL_600 600
+#define NOMINAL_550 550
+#define NOMINAL_500 500
+#define NOMINAL_450 450
+#define NOMINAL_400 400
+#define NOMINAL_350 350
+#define NOMINAL_300 300
+#define NOMINAL_250 250
+#define NOMINAL_200 200
+#define NOMINAL_150 150
+#define NOMINAL_100 100
+#define NOMINAL_50 50
+
 #define CONTROL_START_ROUTINE 'J'
 #define CONTROL_STOP_ROUTINE 'K'
 #define CONTROL_READ_INSTRUCTIONS 'L'
@@ -35,7 +52,9 @@
 #define INSTRUCTION_POLARITY_N '-'
 #define INSTRUCTION_UNITY_MS 'M'
 #define INSTRUCTION_UNITY_US 'U'
-#define INSTRUCTION_SEPARATOR '$'
+#define INSTRUCTION_UNITY_S 'S'
+
+#define INSTRUCTION_SEPARATOR "$"
 #define INSTRUCTION_END '>'
 
 //===============================================================================
@@ -52,19 +71,21 @@ const double micro = 0.000001;
 
 const int buffer = 250;
 int counterBuffer = 0;
-char tempData[buffer] = { NULL };
+char tempData[buffer];
 
 int pulseCounter = 0;
-const int numOfPulses = 50;
-int Currents[numOfPulses] = { NULL };              // listed currents above
-int Polarities[numOfPulses] = { NULL };            //+1 or -1
-double PulseLengths[numOfPulses] = { NULL };       //time of pulse length
-double InterpulseLengths[numOfPulses] = { NULL };  // //time of interpulse interval
-
+const int numOfPulses = 10;
+int Currents[numOfPulses];                            // listed currents above
+int Polarities[numOfPulses];                         //+1 or -1
+double PulseLengths[numOfPulses];                    //time of pulse length
+double InterpulseLengths[numOfPulses];               //time of interpulse interval
+double PulseLengthsMeasure[numOfPulses];             //time of pulse length
+double InterpulseLengthsMeasure[numOfPulses];        //time of interpulse interval
+char measureUnity;
 //===============================================================================
 //                              Main Func
 //===============================================================================
-int main() {
+void setup() {
   //InitializeDelayCounterAndSetClockPins(); //arquivo .S
 
   Digipot_CurrentValue = DIGIPOT_UNKNOWN;
@@ -74,16 +95,20 @@ int main() {
   digitalWrite(DIGIPOT_CS_PIN, HIGH);
 
   Serial.begin(115200);
-  Serial.println("Stimulator is ready");
-
-  while (1) {
-    MonitoringSerialData();
-    if (IsReading) HandleReceivedData();
-    else if (IsRunning) RunRoutine();
-  }
-
-  return 0;
+  Serial.print("Stimulator is ready");
 }
+void loop()
+{
+  MonitoringSerialData();
+  if (IsReading)
+  {
+//    Serial.println("Reading");
+    ReceivingInstruction();
+  }
+  else if (IsRunning) RunRoutine();
+
+}
+
 //===============================================================================
 //                             RunRoutine
 //===============================================================================
@@ -95,176 +120,237 @@ void RunRoutine() {
 //                             Serial Monitor
 //===============================================================================
 
+void ResetBuffer() {
+  memset(tempData, 0, buffer);
+  counterBuffer = 0;
+}
+
 void MonitoringSerialData() {
   while (Serial.available() > 0) {
     int readedBytes = Serial.readBytesUntil(INSTRUCTION_END, tempData, buffer);
+    Serial.print("Received data - Monitor ");      Serial.println(tempData);
+
     if (readedBytes == 0) Serial.write("ERROR WHEN TRY TO READ BYTES");
-    else {
-      Serial.print("Received data: ");
-      Serial.println(tempData);
-      if (tempData < 2) {
-
-        if (tempData[0] == CONTROL_RESET_INSTRUCTION)  //R>
-        {
-          ResetBuffer();
-          pulseCounter = 0;
-
-          InterpulseLengths[numOfPulses] = { NULL };
-          Currents[numOfPulses] = { NULL };
-          Polarities[numOfPulses] = { NULL };
-          PulseLengths[numOfPulses] = { NULL };
-
-          HasInstruction = false;
-          Serial.write("RESETED");
-        }
-
-        if (tempData[0] == CONTROL_START_ROUTINE)  //J>
-        {
-          Serial.write("Start Routine");
-          if (!IsReading) {
-            if (!HasInstruction) Serial.write("ERROR: Dont have a routine loaded");
-            else IsRunning = true;
-          } else Serial.write("ERROR: Must stop reading before run routine");
-        }
-
-        if (tempData[0] == CONTROL_STOP_ROUTINE)  //K>
-        {
-          Serial.write("Stop Routine");
-          if (!IsReading) {
-            if (!HasInstruction) Serial.write("ERROR: Dont have a routine loaded");
-            else IsRunning = false;
-          } else Serial.write("ERROR: Must stop reading before run routine");
-        }
-
-        if (tempData[0] == CONTROL_READ_INSTRUCTIONS)  //L>
-        {
-          Serial.write("Read Routine");
-          if (!IsRunning) {
-            if (HasInstruction) Serial.write("ERROR: Must reset pre-loaded routine first");
-            else IsReading = true;
-          } else Serial.write("ERROR: Must stop running before send new routine");
-        }
-
-        if (tempData[0] == CONTROL_STOP_READ_INSTRUCTIONS)  //M>
-        {
-          Serial.write("Stop Read Routine");
-          if (!IsRunning) {
-            if (IsReading && !HasInstruction) {
-              IsReading = false;
-              HasInstruction = true;
-            }
-          } else Serial.write("ERROR: Must stop running before send new routine");
-        }
+    else if (tempData[0] != '\n') {
+      if (readedBytes < 2) {
+        HandleControlData();
       }
     }
+    ResetBuffer();
   }
 }
+
+void HandleControlData() {
+
+
+  if (tempData[0] == CONTROL_RESET_INSTRUCTION)  //R>
+  {
+    ResetBuffer();
+    pulseCounter = 0;
+
+    InterpulseLengths[numOfPulses] = { NULL };
+    Currents[numOfPulses] = { NULL };
+    Polarities[numOfPulses] = { NULL };
+    PulseLengths[numOfPulses] = { NULL };
+
+    HasInstruction = false;
+    Serial.println("RESETED");
+  }
+
+  if (tempData[0] == CONTROL_START_ROUTINE)  //J>
+  {
+    Serial.println("Start Routine");
+    if (!IsReading) {
+      if (!HasInstruction) Serial.println("ERROR: Dont have a routine loaded");
+      else
+      {
+        IsRunning = true;
+        Serial.println("Routine Enabled");
+      }
+    } else Serial.println("ERROR: Must stop reading before run routine");
+  }
+
+  if (tempData[0] == CONTROL_STOP_ROUTINE)  //K>
+  {
+    Serial.println("Stop Routine");
+    if (!IsReading) {
+      if (!HasInstruction) Serial.println("ERROR: Dont have a routine loaded");
+      else
+      {
+        IsRunning = false;
+        Serial.println("Routine Disabled");
+      }
+    } else Serial.println("ERROR: Must stop reading before run routine");
+  }
+
+  if (tempData[0] == CONTROL_READ_INSTRUCTIONS)  //L>
+  { Serial.println("Start Read Instructions");
+    if (!IsRunning) {
+      if (HasInstruction) Serial.println("ERROR: Must reset pre-loaded routine first");
+      else {
+        IsReading = true;
+        Serial.println("Read Routine Enabled");
+      }
+    } else Serial.println("ERROR: Must stop running before send new routine");
+  }
+
+  if (tempData[0] == CONTROL_STOP_READ_INSTRUCTIONS)  //M>
+  {
+    Serial.println("Stop Read Instructions");
+    if (!IsRunning) {
+      if (IsReading && !HasInstruction) {
+        IsReading = false;
+        HasInstruction = true;
+        Serial.println("Read Routine Disabled");
+      }
+    } else Serial.println("ERROR: Must stop running before send new routine");
+  }
+
+}
+
 //===============================================================================
-//                             Received Data
+//                          Receiving Instruction
 //===============================================================================
+//Exemplo: 250$+$189.5M$78.7U>
+//Exemplo: 50$-$0.5S$787.48M>
+//Exemplo: 150$-$43.4U$7.28S>
+void ReceivingInstruction() {
 
-void HandleReceivedData() {
+  while (Serial.available() > 0) {
 
-  //char phrase[] = "250$+$50U$500M>";
-  //printf(tempData);
+    int readedBytes = Serial.readBytesUntil(INSTRUCTION_END, tempData, buffer);
+    Serial.print("Received data: ");      Serial.println(tempData);
 
-  // get the first part - the current	==================================
-  char* strtokIndx = strtok(tempData, INSTRUCTION_SEPARATOR);
-  int tempCurrent = atoi(strtokIndx);
-  printf("\n");
-  printf("%d", tempCurrent);
+    if (readedBytes == 0) Serial.write("ERROR WHEN TRY TO READ BYTES");
+    else if (tempData[0] != '\n') {
+      if (readedBytes < 2) {
+        HandleControlData();
+      }
+      else {
+        // get the first part - the current  ==================================
+        char* strtokIndx = strtok(tempData, INSTRUCTION_SEPARATOR);
+        int tempCurrent = atoi(strtokIndx);
+        //      Serial.print("Current: ");  Serial.println(tempCurrent);
+        Currents[pulseCounter] = tempCurrent;
 
-  // get the second part - the polarity	==================================
-  char polarity[1] = { NULL };
-  int tempPolarity = 0;
+        // get the second part - the polarity ==================================
+        char polarity[1];
+        int tempPolarity = 0;
+        strtokIndx = strtok(NULL, INSTRUCTION_SEPARATOR);
+        strcpy(polarity, strtokIndx);  // copy it to messageFromPC
+        if (polarity[0] == INSTRUCTION_POLARITY_P) tempPolarity = 1;
+        if (polarity[0] == INSTRUCTION_POLARITY_N) tempPolarity = -1;
+        //      Serial.print("Polarity: ");  Serial.println(tempPolarity);
+        Polarities[pulseCounter] = tempPolarity;
 
-  strtokIndx = strtok(NULL, INSTRUCTION_SEPARATOR);
-  strcpy(polarity, strtokIndx);  // copy it to messageFromPC
-  if (polarity[0] == '+') tempPolarity = 1;
-  if (polarity[0] == '-') tempPolarity = -1;
-  printf("\n");
-  printf("\n");
-  printf("%d", tempPolarity);
+        // get the third part - the pulse length  ==================================
+        strtokIndx = strtok(NULL, INSTRUCTION_SEPARATOR);
+        float timeConverted = GetTimeFromInstruction(strtokIndx);
+        //      Serial.print("Pulse Length: "); Serial.println(timeConverted);
+        //      Serial.print("Measure Unity: "); Serial.println(measureUnity);
+        PulseLengths[pulseCounter] = timeConverted;
+        PulseLengthsMeasure[pulseCounter] = measureUnity;
 
-  // get the third part - the pulse length	==================================
+        // get the fourth part - the interpulse length  ==================================
+        strtokIndx = strtok(NULL, INSTRUCTION_SEPARATOR);
+        timeConverted = GetTimeFromInstruction(strtokIndx);
+        //      Serial.print("Pulse Length: "); Serial.println(timeConverted);
+        //      Serial.print("Measure Unity: "); Serial.println(measureUnity);
+        InterpulseLengths[pulseCounter] = timeConverted;
+        InterpulseLengthsMeasure[pulseCounter] = measureUnity;
+
+        Serial.print(Currents[pulseCounter]); Serial.print(" - ");
+        Serial.print(Polarities[pulseCounter]); Serial.print(" - ");
+        Serial.print(PulseLengths[pulseCounter]); Serial.print(" - ");
+        Serial.print(PulseLengthsMeasure[pulseCounter]); Serial.print(" - ");
+        Serial.print(InterpulseLengths[pulseCounter]); Serial.print(" - ");
+        Serial.println(InterpulseLengthsMeasure[pulseCounter]);
+
+        pulseCounter++;
+      }
+    }
+
+    ResetBuffer();
+
+  }
+}
+
+float GetTimeFromInstruction(char *strtokIndx)
+{
+  measureUnity = 0;
   char timeWithoutUnity[15];
-  strtokIndx = strtok(NULL, INSTRUCTION_SEPARATOR);
-  int length = sizeof(strtokIndx) / sizeof(strtokIndx[0]);
-  printf("\n");
-  printf("\n");
-  double timeC = 0.0;
-  for (int i = 0; i < length; i++) {
-    if (strtokIndx[i] == 'U') {
-      timeC = atof(timeWithoutUnity) * 0.000001;
-      break;
-    } else if (strtokIndx[i] == 'M') {
-      timeC = atof(timeWithoutUnity) * 0.001;
-      printf("%f", timeC);
+  strcpy(timeWithoutUnity, strtokIndx);
+  float timeC = 0.0;
+  for (int i = 0; i < sizeof(timeWithoutUnity); i++) {
+    if (strtokIndx[i] == INSTRUCTION_UNITY_MS || strtokIndx[i] == INSTRUCTION_UNITY_US || strtokIndx[i] == INSTRUCTION_UNITY_S) {
+      timeC = atof(timeWithoutUnity);
+      measureUnity = strtokIndx[i];
       break;
     } else {
       timeWithoutUnity[i] = strtokIndx[i];
     }
   }
-
-  // get the fourth part - the interpulse length	==================================
-
-  memset(timeWithoutUnity, 0, 15);
-  strtokIndx = strtok(NULL, INSTRUCTION_SEPARATOR);
-  length = sizeof(strtokIndx) / sizeof(strtokIndx[0]);
-  printf("\n");
-  printf("\n");
-  timeC = 0.0;
-  for (int i = 0; i < length; i++) {
-    if (strtokIndx[i] == 'U') {
-      timeC = atof(timeWithoutUnity) * 0.000001;
-      printf("%f", timeC);
-      break;
-    } else if (strtokIndx[i] == 'M') {
-      timeC = atof(timeWithoutUnity) * 0.001;
-      printf("%f", timeC);
-      break;
-    } else {
-      timeWithoutUnity[i] = strtokIndx[i];
-    }
-  }
-}
-
-
-void ResetBuffer() {
-  tempData[buffer] = { NULL };
-  counterBuffer = 0;
+  return timeC;
 }
 
 //===============================================================================
 //                                      Delay
 //===============================================================================
 
-// void
-// DelaySec (int value)
-// {
-//   for (int i = 0; i < value; i++)
-// 	Delay_1s ();
-// }
+void DelaySec (int value)
+{
+  for (int i = 0; i < value; i++)
+    Delay_1s ();
+}
 
-// void
-// DelayMs (int value)
-// {
-//   for (int i = 0; i < value; i++)
-// 	Delay_1ms ();
-// }
+void DelayMs (int value)
+{
+  for (int i = 0; i < value; i++)
+    Delay_1ms ();
+}
 
-// void
-// DelayUs (int value)
-// {
-//   for (int i = 0; i < value; i++)
-// 	Delay_1us ();
-// }
+void DelayUs (int value)
+{
+  for (int i = 0; i < value; i++)
+    Delay_1us ();
+}
 
 //===============================================================================
 //                        Digital Potentiometer
 //===============================================================================
 
-void SetPotentiometerValue(uint8_t value) {
+void Change(int direction, int amount) {
+  amount = constrain(amount, 0, DIGIPOT_MAX_AMOUNT);
+  digitalWrite(DIGIPOT_UD_PIN, direction);
+  digitalWrite(DIGIPOT_INC_PIN, HIGH);
+  digitalWrite(DIGIPOT_CS_PIN, LOW);
+
+  for (int i = 0; i < amount; i++) {
+    digitalWrite(DIGIPOT_INC_PIN, LOW);
+    delayMicroseconds(2);
+    digitalWrite(DIGIPOT_INC_PIN, HIGH);
+    delayMicroseconds(2);
+    if (Digipot_CurrentValue != DIGIPOT_UNKNOWN) {
+      Digipot_CurrentValue += (direction == DIGIPOT_UP ? 1 : -1);
+      Digipot_CurrentValue =
+        constrain(Digipot_CurrentValue, 0, DIGIPOT_MAX_AMOUNT);
+    }
+  }
+  digitalWrite(DIGIPOT_CS_PIN, HIGH);
+}
+
+void Increase(int amount) {
+  amount = constrain(amount, 0, DIGIPOT_MAX_AMOUNT);
+  Change(DIGIPOT_UP, amount);
+}
+
+void Decrease(int amount) {
+  amount = constrain(amount, 0, DIGIPOT_MAX_AMOUNT);
+  Change(DIGIPOT_DOWN, amount);
+}
+
+
+void SetPotentiometerValue(int value) {
   value = constrain(value, 0, DIGIPOT_MAX_AMOUNT);
 
   if (Digipot_CurrentValue == DIGIPOT_UNKNOWN) {
@@ -277,34 +363,4 @@ void SetPotentiometerValue(uint8_t value) {
 
   if (Digipot_CurrentValue < value)
     Change(DIGIPOT_UP, value - Digipot_CurrentValue);
-}
-
-void Increase(uint8_t amount) {
-  amount = constrain(amount, 0, DIGIPOT_MAX_AMOUNT);
-  Change(DIGIPOT_UP, amount);
-}
-
-void Decrease(uint8_t amount) {
-  amount = constrain(amount, 0, DIGIPOT_MAX_AMOUNT);
-  Change(DIGIPOT_DOWN, amount);
-}
-
-void Change(uint8_t direction, uint8_t amount) {
-  amount = constrain(amount, 0, DIGIPOT_MAX_AMOUNT);
-  digitalWrite(DIGIPOT_UD_PIN, direction);
-  digitalWrite(DIGIPOT_INC_PIN, HIGH);
-  digitalWrite(DIGIPOT_CS_PIN, LOW);
-
-  for (uint8_t i = 0; i < amount; i++) {
-    digitalWrite(DIGIPOT_INC_PIN, LOW);
-    delayMicroseconds(2);
-    digitalWrite(DIGIPOT_INC_PIN, HIGH);
-    delayMicroseconds(2);
-    if (Digipot_CurrentValue != DIGIPOT_UNKNOWN) {
-      Digipot_CurrentValue += (direction == DIGIPOT_UP ? 1 : -1);
-      Digipot_CurrentValue =
-        constrain(Digipot_CurrentValue, 0, DIGIPOT_MAX_AMOUNT);
-    }
-  }
-  digitalWrite(DIGIPOT_CS_PIN, HIGH);
 }
