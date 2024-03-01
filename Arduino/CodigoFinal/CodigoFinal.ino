@@ -93,7 +93,7 @@ void setup() {
   pinMode(DIGIPOT_UD_PIN, OUTPUT);
   pinMode(DIGIPOT_CS_PIN, OUTPUT);
   digitalWrite(DIGIPOT_CS_PIN, HIGH);
-  
+
   Serial.begin(115200);
   Serial.print("Stimulator is ready");
 }
@@ -101,7 +101,7 @@ void setup() {
 void loop()
 {
   MonitoringSerialData();
-  if (IsReading) ReceivingInstruction();  
+  if (IsReading) ReceivingInstruction();
   else if (IsRunning) RunRoutine();
 }
 
@@ -110,85 +110,91 @@ void loop()
 //===============================================================================
 
 void RunRoutine() {
-  for(int i =0; i < pulseCounter; i++)
+  for (int i = 0; i < pulseCounter; i++)
   {
-     Serial.println("Running");
+    Serial.println("Running");
     SetCurrentBasedOnNominalCurrent(Currents[i]);
-  //      Delay_1us;
-        if(Polarities[i] == 1){Set_Pin11_High;Set_Pin12_Low;} //Seta o pino do clock1
-    else{Set_Pin12_High;Set_Pin11_Low;} //Seta o pino do clock 2
-//        Delay_1us;
+    //      Delay_1us;
+    if (Polarities[i] == 1) {
+      Set_Pin11_High;  //Seta o pino do clock1
+      Set_Pin12_Low;
+    }
+    else {
+      Set_Pin12_High;  //Seta o pino do clock 2
+      Set_Pin11_Low;
+    }
+    //        Delay_1us;
     Wait(PulseLengths[i],  InterpulseLengths[i]); //pulse length
 
     Wait(PulseLengthsMeasure[i],  InterpulseLengthsMeasure[i]); //pulse length
-  }  
+  }
 }
 
 void SetCurrentBasedOnNominalCurrent(int nominal)
 {
-  switch(nominal)
-    {
-      case NOMINAL_650:
-        SetPotentiometerValue(CURRENT_650);
-        break;
-      case NOMINAL_600: 
-          SetPotentiometerValue(CURRENT_600);
-        break;
-        case NOMINAL_550:
-            SetPotentiometerValue(CURRENT_550);
-        break;
-      case NOMINAL_500:
-          SetPotentiometerValue(CURRENT_500);
-        break;
-      case NOMINAL_450:
-          SetPotentiometerValue(CURRENT_450);
-        break;
-      case NOMINAL_400: 
-          SetPotentiometerValue(CURRENT_400);
-        break;
-      case NOMINAL_350:
-          SetPotentiometerValue(CURRENT_350);
-        break;
-      case NOMINAL_300:
-          SetPotentiometerValue(CURRENT_300);
-        break;
-      case NOMINAL_250:
-          SetPotentiometerValue(CURRENT_250);
-        break;
-      case NOMINAL_200:
-          SetPotentiometerValue(CURRENT_200);
-        break;
-        case NOMINAL_150:
-            SetPotentiometerValue(CURRENT_150);
-        break;
-        case NOMINAL_100:
-            SetPotentiometerValue(CURRENT_100);
-        break;
-        case NOMINAL_50:
-            SetPotentiometerValue(CURRENT_50);
-        break;
-    }
+  switch (nominal)
+  {
+    case NOMINAL_650:
+      SetPotentiometerValue(CURRENT_650);
+      break;
+    case NOMINAL_600:
+      SetPotentiometerValue(CURRENT_600);
+      break;
+    case NOMINAL_550:
+      SetPotentiometerValue(CURRENT_550);
+      break;
+    case NOMINAL_500:
+      SetPotentiometerValue(CURRENT_500);
+      break;
+    case NOMINAL_450:
+      SetPotentiometerValue(CURRENT_450);
+      break;
+    case NOMINAL_400:
+      SetPotentiometerValue(CURRENT_400);
+      break;
+    case NOMINAL_350:
+      SetPotentiometerValue(CURRENT_350);
+      break;
+    case NOMINAL_300:
+      SetPotentiometerValue(CURRENT_300);
+      break;
+    case NOMINAL_250:
+      SetPotentiometerValue(CURRENT_250);
+      break;
+    case NOMINAL_200:
+      SetPotentiometerValue(CURRENT_200);
+      break;
+    case NOMINAL_150:
+      SetPotentiometerValue(CURRENT_150);
+      break;
+    case NOMINAL_100:
+      SetPotentiometerValue(CURRENT_100);
+      break;
+    case NOMINAL_50:
+      SetPotentiometerValue(CURRENT_50);
+      break;
+  }
 }
 
 void Wait(int time, char timeUnity)
 {
-    double integral;
+  double integral;
   double fractional;
-  if(timeUnity == INSTRUCTION_UNITY_US)
-      DelayUs (time);
-    else if(timeUnity == INSTRUCTION_UNITY_MS)
+  if (timeUnity == INSTRUCTION_UNITY_US)
+    DelayUs (time);
+  else if (timeUnity == INSTRUCTION_UNITY_MS)
   {
-      fractional = modf(time, &integral);
-      DelayMs(integral);
-      DelayUs(fractional;
+    fractional = modf(time, &integral);
+    DelayMs(integral);
+    DelayUs(fractional);
   }
-      else if(timeUnity == INSTRUCTION_UNITY_S)
-      {
-         fractional = modf(time, &integral);
-      DelayS(integral);
-      DelayMs(fractional;
-      }
-      else Serial.println("ERROR: Problem in wait function");
+  else if (timeUnity == INSTRUCTION_UNITY_S)
+  {
+    fractional = modf(time, &integral);
+    DelaySec(integral);
+    DelayMs(fractional);
+  }
+  else Serial.println("ERROR: Problem in wait function");
 }
 
 //===============================================================================
@@ -304,28 +310,32 @@ void ReceivingInstruction() {
       else {
         // get the first part - the current  ==================================
         char* strtokIndx = strtok(tempData, INSTRUCTION_SEPARATOR);
-        int tempCurrent = atoi(strtokIndx);        
+        int tempCurrent = atoi(strtokIndx);
         Currents[pulseCounter] = tempCurrent;
 
         // get the second part - the polarity ==================================
         char polarity[1];
         int tempPolarity = 0;
         strtokIndx = strtok(NULL, INSTRUCTION_SEPARATOR);
-        strcpy(polarity, strtokIndx);  // copy it to messageFromPC
+        strcpy(polarity, strtokIndx);
         if (polarity[0] == INSTRUCTION_POLARITY_P) tempPolarity = 1;
         if (polarity[0] == INSTRUCTION_POLARITY_N) tempPolarity = -1;
         Polarities[pulseCounter] = tempPolarity;
 
         // get the third part - the pulse length  ==================================
         strtokIndx = strtok(NULL, INSTRUCTION_SEPARATOR);
-        float timeConverted = GetTimeFromInstruction(strtokIndx);     
+        float timeConverted = GetTimeFromInstruction(strtokIndx);         
+//    Serial.print("Time: "); Serial.println(timeConverted); 
         PulseLengths[pulseCounter] = timeConverted;
+//        Serial.print("Unity: "); Serial.println(measureUnity); 
         PulseLengthsMeasure[pulseCounter] = measureUnity;
 
         // get the fourth part - the interpulse length  ==================================
         strtokIndx = strtok(NULL, INSTRUCTION_SEPARATOR);
-        timeConverted = GetTimeFromInstruction(strtokIndx);       
+        timeConverted = GetTimeFromInstruction(strtokIndx);
+//        Serial.print("Time: "); Serial.println(timeConverted); 
         InterpulseLengths[pulseCounter] = timeConverted;
+//        Serial.print("Unity: "); Serial.println(measureUnity); 
         InterpulseLengthsMeasure[pulseCounter] = measureUnity;
 
         Serial.print(pulseCounter); Serial.print(": ");
