@@ -34,11 +34,12 @@ void setup() {
   //19 = 155
   //15 = 100uA
   //11 = 51 uA 
+  Serial.println("Stimulator is ready");
 }
 
 void loop()
 {
-
+Serial.println("Stimulator is ready");
   //digitalWrite(_clock2Pin, DIGIPOT_DOWN);
   //digitalWrite(_clock2Pin, DIGIPOT_UP);
   //delay(3000);
