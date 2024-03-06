@@ -1,7 +1,7 @@
 void RunRoutine() {
   for (int i = 0; i < pulseCounter; i++)
   {
-    Serial.print(" Loop: "); Serial.println(i);
+    //Serial.print(" Loop: "); Serial.println(i);
     SetCurrentBasedOnNominalCurrent(Currents[i]);
 
     if (Polarities[i] == 1) {
