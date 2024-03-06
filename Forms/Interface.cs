@@ -109,7 +109,7 @@ namespace SerialPortController
             string newText = ((SerialPort)sender).ReadExisting();
             if (!IsRunning)
             {
-                if (newText.Contains(LOOP) && readAllData) IsRunning = true; else IsRunning = false;
+                if (/*newText.Contains(LOOP) &&*/ readAllData) IsRunning = true; else IsRunning = false;
 
                 var separarDadosLidos = newText.Split(new string[] { "R\r\n", "Re\r\n", "Rea\r\n", "Read\r\n", "Readi\r\n", "Readin\r\n", "Reading\r\n", "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
                 separarDadosLidos.RemoveAll(x => x.Contains(READING));
@@ -297,7 +297,7 @@ namespace SerialPortController
         {
             if (_control != null && _control!.IsConnected)
             {
-                string message = $"Você realmente deseja fechar esta janela? {JUMPLINE}{JUMPLINE} Isso irá cortar a comunicação com o estimulador.";
+                string message = $"VocÃª realmente deseja fechar esta janela? {JUMPLINE}{JUMPLINE} Isso irÃ¡ cortar a comunicaÃ§Ã£o com o estimulador.";
                 string caption = "Fechar Interface";
                 var result = MessageBox.Show(message, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
