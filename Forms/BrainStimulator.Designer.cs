@@ -231,6 +231,7 @@
             PeriodicTab_SendConfigToBoard.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
             PeriodicTab_SendConfigToBoard.UseAccentColor = false;
             PeriodicTab_SendConfigToBoard.UseVisualStyleBackColor = true;
+            PeriodicTab_SendConfigToBoard.Click += PeriodicTab_SendConfigToBoard_Click;
             // 
             // PeriodicTab_GridMain
             // 

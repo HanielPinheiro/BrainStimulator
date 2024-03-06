@@ -51,7 +51,10 @@
             switchDefaultParameters = new MaterialSkin.Controls.MaterialSwitch();
             btnConnect = new MaterialSkin.Controls.MaterialButton();
             btnDisconnect = new MaterialSkin.Controls.MaterialButton();
+            groupBox2 = new GroupBox();
+            txtReceivedData = new MaterialSkin.Controls.MaterialMultiLineTextBox();
             groupBox1.SuspendLayout();
+            groupBox2.SuspendLayout();
             SuspendLayout();
             // 
             // btnUpdate
@@ -144,7 +147,7 @@
             groupBox1.Controls.Add(materialLabel6);
             groupBox1.Controls.Add(materialLabel7);
             groupBox1.Controls.Add(materialLabel8);
-            groupBox1.Font = new Font("Arial", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
+            groupBox1.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
             groupBox1.Location = new Point(6, 188);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(260, 369);
@@ -438,11 +441,39 @@
             btnDisconnect.UseVisualStyleBackColor = true;
             btnDisconnect.Click += btnDisconnect_Click;
             // 
+            // groupBox2
+            // 
+            groupBox2.Controls.Add(txtReceivedData);
+            groupBox2.Font = new Font("Segoe UI", 14F, FontStyle.Regular, GraphicsUnit.Point);
+            groupBox2.Location = new Point(277, 83);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new Size(335, 519);
+            groupBox2.TabIndex = 15;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "Dados Recebidos";
+            // 
+            // txtReceivedData
+            // 
+            txtReceivedData.BackColor = Color.FromArgb(255, 255, 255);
+            txtReceivedData.BorderStyle = BorderStyle.None;
+            txtReceivedData.Depth = 0;
+            txtReceivedData.Font = new Font("Microsoft Sans Serif", 14F, FontStyle.Regular, GraphicsUnit.Pixel);
+            txtReceivedData.ForeColor = Color.FromArgb(222, 0, 0, 0);
+            txtReceivedData.Location = new Point(6, 31);
+            txtReceivedData.MouseState = MaterialSkin.MouseState.HOVER;
+            txtReceivedData.Name = "txtReceivedData";
+            txtReceivedData.ReadOnly = true;
+            txtReceivedData.Size = new Size(323, 482);
+            txtReceivedData.TabIndex = 0;
+            txtReceivedData.Text = "";
+            txtReceivedData.TextChanged += txtReceivedData_TextChanged;
+            // 
             // Interface
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(273, 611);
+            ClientSize = new Size(618, 611);
+            Controls.Add(groupBox2);
             Controls.Add(btnDisconnect);
             Controls.Add(btnConnect);
             Controls.Add(switchDefaultParameters);
@@ -461,6 +492,7 @@
             FormClosed += Interface_FormClosed;
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
+            groupBox2.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -489,5 +521,7 @@
         private MaterialSkin.Controls.MaterialComboBox cbHandShake;
         private MaterialSkin.Controls.MaterialComboBox cbStopBits;
         private MaterialSkin.Controls.MaterialComboBox cbParity;
+        private GroupBox groupBox2;
+        private MaterialSkin.Controls.MaterialMultiLineTextBox txtReceivedData;
     }
 }

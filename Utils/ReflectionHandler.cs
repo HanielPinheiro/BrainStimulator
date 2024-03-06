@@ -84,7 +84,7 @@ namespace BrainStimulator.Utils
                     if (attribArray.Length == 0) continue;
 
                     DefaultValueAttribute defaultValueAttribute = (DefaultValueAttribute)attribArray.First();
-                    double? value =  double.Parse(defaultValueAttribute.Value!.ToString()!);
+                    double? value = double.Parse(defaultValueAttribute.Value!.ToString()!);
 
                     object? obj = field.GetValue(null);
                     T enumValue = (T)Enum.ToObject(typeof(T), obj!);
@@ -95,6 +95,30 @@ namespace BrainStimulator.Utils
                 return defaultValues;
             }
             catch (Exception ex) { throw new Exception($"Problem in {nameof(GetFromEnum_DefaultValueAttributes)} - {ex.Message}"); };
+        }
+
+        public static Dictionary<string, string> GetFromEnum_DescriptionAndAmbientValueAttributes<T>() where T : struct, Enum
+        {
+            try
+            {
+                Dictionary<string, string> values = new();
+                FieldInfo[] fields = typeof(T)!.GetFields();
+                foreach (var field in fields)
+                {
+                    object[] description = field.GetCustomAttributes(typeof(DescriptionAttribute), false);
+                    if (description.Length == 0) continue;
+                    DescriptionAttribute descriptionAttribute = (DescriptionAttribute)description.First();
+
+                    object[] ambientValue = field.GetCustomAttributes(typeof(AmbientValueAttribute), false);
+                    if (ambientValue.Length == 0) continue;
+                    AmbientValueAttribute ambientValueAttribute = (AmbientValueAttribute)ambientValue.First();
+
+                    values.Add(descriptionAttribute.Description!, ambientValueAttribute.Value!.ToString()!);
+                }
+
+                return values;
+            }
+            catch (Exception ex) { throw new Exception($"Problem in {nameof(GetFromEnum_DescriptionAndAmbientValueAttributes)} - {ex.Message}"); };
         }
 
         public static Dictionary<string, string> GetFromProperties_DisplayNameAttributes<T>()

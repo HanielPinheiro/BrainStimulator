@@ -16,7 +16,14 @@ namespace BrainStimulator
         private Interface? boardConnection;
         private MaterialSkinManager materialSkinManager = MaterialSkinManager.Instance;
         private DataGridViewCellStyle? DefaultCellStyle;
-        private const string downline = "\r\n";
+
+        private const string JUMPLINE = "\r\n";
+        public const string RESET_BOARD = "D>";
+        private const string RESET_PREVIOUS_SETUP = "R>";
+        private const string START_ROUTINE = "J>";
+        private const string STOP_ROUTINE = "K>";
+        private const string START_READ = "L>";
+        public const string STOP_READ = "M>";
 
         public BrainStimulator()
         {
@@ -177,11 +184,45 @@ namespace BrainStimulator
 
         private void Error(string errorMessage, Exception e)
         {
-            MessageBox.Show($"{errorMessage} {downline}{downline}Exception message:{downline} {e.Message}", "Erro!", MessageBoxButtons.OK, MessageBoxIcon.Error); ;
+            MessageBox.Show($"{errorMessage} {JUMPLINE}{JUMPLINE}Exception message:{JUMPLINE} {e.Message}", "Erro!", MessageBoxButtons.OK, MessageBoxIcon.Error); ;
         }
 
+        private void PeriodicTab_SendConfigToBoard_Click(object sender, EventArgs e)
+        {
+            boardConnection!.ResetControllers(PeriodicTab_GridMain.Rows.Count);
 
+            try
+            {
+                int delay = 100;
+                boardConnection!.SendData(STOP_ROUTINE);
+                Thread.Sleep(delay);
+
+                boardConnection!.SendData(STOP_READ);
+                Thread.Sleep(delay);
+
+                boardConnection!.SendData(RESET_PREVIOUS_SETUP);
+                Thread.Sleep(delay);
+
+                boardConnection!.SendData(START_READ);
+                Thread.Sleep(2000);
+
+                foreach (DataGridViewRow row in PeriodicTab_GridMain.Rows)
+                {
+                    if (row.DataBoundItem is Pulse pulse)
+                    {
+                        var txt = pulse.ToString().Replace(",", ".");
+                        boardConnection!.SendData(txt);
+                        Thread.Sleep(2000);
+                    }
+                }
+
+                boardConnection!.SendData(STOP_READ);
+                Thread.Sleep(2000);
+
+                boardConnection!.SendData(START_ROUTINE);
+                Thread.Sleep(delay);
+            }
+            catch (Exception ex) { Error("Error when try to send configs to the board", ex); }
+        }
     }
-
-
 }

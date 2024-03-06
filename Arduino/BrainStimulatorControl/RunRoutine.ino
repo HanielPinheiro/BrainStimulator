@@ -1,29 +1,29 @@
 void RunRoutine() {
-  Serial.println("Running");
   for (int i = 0; i < pulseCounter; i++)
   {
-    Serial.print("Loop: "); Serial.println(i);
+    Serial.print(" Loop: "); Serial.print(i);
     SetCurrentBasedOnNominalCurrent(Currents[i]);
 
     if (Polarities[i] == 1) {
-      Serial.println("Pin11 High");
+      Serial.print(" Pin11 High ");
       digitalWrite(CLOCK_1_PIN, HIGH);
     }
     else {
-      Serial.println("Pin12 High");
+      Serial.print(" Pin12 High ");
       digitalWrite(CLOCK_2_PIN, HIGH);
     }
-    Wait(PulseLengths[i],  PulseLengthsMeasure[i]); //pulse length
+    Wait(PulseLengths[i],  PulseLengthsMeasure[i]);
 
-digitalWrite(CLOCK_1_PIN, LOW);
-digitalWrite(CLOCK_2_PIN, LOW);
-    Wait(InterpulseLengths[i],  InterpulseLengthsMeasure[i]); //pulse length
+    digitalWrite(CLOCK_1_PIN, LOW);
+    digitalWrite(CLOCK_2_PIN, LOW);
+    Wait(InterpulseLengths[i],  InterpulseLengthsMeasure[i]);
+    Serial.println("");
   }
 }
 
 void SetCurrentBasedOnNominalCurrent(int nominalCurrentValue)
 {
-  Serial.print("Current:"); Serial.println(nominalCurrentValue);
+  Serial.print(" Current: "); Serial.print(nominalCurrentValue);
   switch (nominalCurrentValue)
   {
     case NOMINAL_650:
@@ -70,7 +70,7 @@ void SetCurrentBasedOnNominalCurrent(int nominalCurrentValue)
 
 void Wait(double time, int timeUnity)
 {
-  Serial.print("Wait:"); Serial.print(time); Serial.print(" "); Serial.println(timeUnity);
+  Serial.print(" Wait: "); Serial.print(time); Serial.print(" "); Serial.print(timeUnity);
 
   int integral;
   double temp;
@@ -78,8 +78,6 @@ void Wait(double time, int timeUnity)
   fractional = modf(time, &temp);
   fractional *= 1000;
   integral = (int) temp;
-  Serial.print("fractional:"); Serial.println(fractional);
-  Serial.print("integral:"); Serial.println(integral);
 
   if (timeUnity == INSTRUCTION_UNITY_US)
     delayMicroseconds(integral);

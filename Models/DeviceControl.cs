@@ -30,7 +30,7 @@ namespace BrainStimulator.Models
 
             parameters.CopyFrom(_parameters);
             parameters.CopyTo(serialPort);
-        }        
+        }
 
         #region Reset
 
@@ -59,7 +59,11 @@ namespace BrainStimulator.Models
         /// <summary>
         /// Following IDispose
         /// </summary>
-        public void Dispose() => Dispose(null);
+        public void Dispose()
+        {
+            serialPort!.Close();
+            serialPort!.Dispose();
+        }
 
         /// <summary>
         /// Dispose Serial Port Connection
@@ -80,15 +84,29 @@ namespace BrainStimulator.Models
 
         #endregion
 
+
         /// <summary>
         /// Set a Received Event Handler to handler data received from board
         /// </summary>
         /// <param name="dataReceivedHandler"></param>
         public void SetDataReceivedEventHandler(SerialDataReceivedEventHandler dataReceivedHandler)
-        {   
-            serialPort!.DataReceived += dataReceivedHandler; 
+        {
+            serialPort!.DataReceived += dataReceivedHandler;
         }
 
+        /// <summary>
+        /// Set a Received Event Handler to handler data received from board
+        /// </summary>
+        /// <param name="dataReceivedHandler"></param>
+        public void UnSetDataReceivedEventHandler(SerialDataReceivedEventHandler dataReceivedHandler)
+        {
+            serialPort!.DataReceived -= dataReceivedHandler;
+        }
+
+        public void SendData(string txt)
+        {
+            if (IsConnected) serialPort!.WriteLine(txt);
+        }
 
     }
 }

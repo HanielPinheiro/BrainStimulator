@@ -11,7 +11,7 @@ void setup() {
   pinMode(CLOCK_2_PIN, OUTPUT);
 
   Serial.begin(115200);
-  Serial.print("Stimulator is ready");
+  Serial.println("Stimulator is ready");
 }
 
 void loop()

@@ -1,22 +1,18 @@
-//Exemplo: 250$+$189.5M$78.7U>
-//Exemplo: 50$-$0.5S$787.48M>
-//Exemplo: 150$-$43.4U$0.1S>
-
 void ReceivingInstruction() {
   Serial.println("Reading");
   while (Serial.available() > 0) {
 
     int readedBytes = Serial.readBytesUntil(INSTRUCTION_END, tempData, buffer);
-    Serial.print("Received data: ");      Serial.println(tempData);
-
     if (readedBytes == 0) Serial.write("ERROR WHEN TRY TO READ BYTES");
-    else if (tempData[0] != '\n') {
-      if (readedBytes < 2) {
-        HandleControlData();
-      }
-      else {
+    else if (readedBytes < 5) {
+      HandleControlData();
+    }
+    else {
+      char* strtokIndx = strtok(tempData, INSTRUCTION_SEPARATOR);
+      if (strcmp(strtokIndx, "SET") == 0)
+      {
         // get the first part - the current  ==================================
-        char* strtokIndx = strtok(tempData, INSTRUCTION_SEPARATOR);
+        strtokIndx = strtok(NULL, INSTRUCTION_SEPARATOR);
         int tempCurrent = atoi(strtokIndx);
         Currents[pulseCounter] = tempCurrent;
 
@@ -32,17 +28,13 @@ void ReceivingInstruction() {
         // get the third part - the pulse length  ==================================
         strtokIndx = strtok(NULL, INSTRUCTION_SEPARATOR);
         float timeConverted = GetTimeFromInstruction(strtokIndx);
-        //Serial.print("Time: "); Serial.println(timeConverted);
         PulseLengths[pulseCounter] = timeConverted;
-        //Serial.print("Unity: "); Serial.println(measureUnity);
         PulseLengthsMeasure[pulseCounter] = measureUnity;
 
         // get the fourth part - the interpulse length  ==================================
         strtokIndx = strtok(NULL, INSTRUCTION_SEPARATOR);
         timeConverted = GetTimeFromInstruction(strtokIndx);
-        //Serial.print("Time: "); Serial.println(timeConverted);
         InterpulseLengths[pulseCounter] = timeConverted;
-        //Serial.print("Unity: "); Serial.println(measureUnity);
         InterpulseLengthsMeasure[pulseCounter] = measureUnity;
 
         Serial.print(pulseCounter); Serial.print(": ");
@@ -71,7 +63,8 @@ float GetTimeFromInstruction(char *strtokIndx)
       timeC = atof(timeWithoutUnity);
       measureUnity = strtokIndx[i];
       break;
-    } else {
+    }
+    else {
       timeWithoutUnity[i] = strtokIndx[i];
     }
   }

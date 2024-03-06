@@ -49,11 +49,11 @@ namespace BrainStimulator.Models
     /// </summary>
     public enum MeasureUnity
     {
-        [Description("Segundos"), DefaultValue(1)]
+        [Description("Segundos"), DefaultValue(1), AmbientValue("S")]
         Seconds,
-        [Description("Milissegundos"), DefaultValue(0.001)]
+        [Description("Milissegundos"), DefaultValue(0.001), AmbientValue("M")]
         Milliseconds,
-        [Description("Microssegundos"), DefaultValue(0.000001)]
+        [Description("Microssegundos"), DefaultValue(0.000001), AmbientValue("U")]
         Microseconds
     }
 

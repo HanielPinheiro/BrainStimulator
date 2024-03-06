@@ -21,8 +21,10 @@ namespace BrainStimulator.Models
         public static Dictionary<PulsePolariy, double> pulsePolarityValues = ReflectionHandler.GetFromEnum_DefaultValueAttributes<PulsePolariy>();
         public static Dictionary<PulseCurrents, double> pulseCurrentValues = ReflectionHandler.GetFromEnum_DefaultValueAttributes<PulseCurrents>();
         public static Dictionary<MeasureUnity, double> measureUnityValues = ReflectionHandler.GetFromEnum_DefaultValueAttributes<MeasureUnity>();
+        
+        public static Dictionary<string, string> measureUnity_DefaultToAmbientRelation= ReflectionHandler.GetFromEnum_DescriptionAndAmbientValueAttributes<MeasureUnity>();
 
-        public static string Layout = $"|{nameof(Pulse.PulseLength)}|{nameof(Pulse.PulseMeasureUnity)}|{nameof(Pulse.AfterPulseLength)}"
+        public const string Layout = $"|{nameof(Pulse.PulseLength)}|{nameof(Pulse.PulseMeasureUnity)}|{nameof(Pulse.AfterPulseLength)}"
                                     + $"|{nameof(Pulse.AfterPulseMeasureUnity)}|{nameof(Pulse.Current)}|{nameof(Pulse.Polarity)}";
 
         #endregion
@@ -75,7 +77,13 @@ namespace BrainStimulator.Models
         public string Current { get; set; } = pulseCurrentToCombobox[PulseCurrents.Hundred];
 
         [DisplayName("Polaridade [uA]"), ColumnSize(90)]
-        public string Polarity { get; set; } = pulsePolarityToCombobox[PulsePolariy.Positive];        
+        public string Polarity { get; set; } = pulsePolarityToCombobox[PulsePolariy.Positive];
+
+        public override string ToString()
+        {
+            string separator = "$";
+            return $"SET{separator}{Current}{separator}{Polarity}{separator}{PulseLength}{measureUnity_DefaultToAmbientRelation[PulseMeasureUnity]}{separator}{AfterPulseLength}{measureUnity_DefaultToAmbientRelation[AfterPulseMeasureUnity]}>";
+        }
     }
 
 }

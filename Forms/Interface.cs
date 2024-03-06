@@ -7,18 +7,27 @@ namespace SerialPortController
 {
     public partial class Interface : MaterialForm
     {
-        private DeviceControl? _control;
-        private readonly DeviceControlParameters? _parameters = new();
-        private const string downline = "\r\n";
+        private const string SAVED_DATA = "Saved data: ";
+        private const string READING = "Reading";
+        private const string LOOP = "Loop";
+        private const string START_ROUTINE = "Start Routine\r\n";
+        private const string JUMPLINE = "\r\n";
 
+        private readonly DeviceControlParameters? _parameters = new();
         public readonly MaterialButton externalSendDataButton;
         public readonly MaterialButton externalConnectButton;
+
+        private DeviceControl? _control;
+        private string? receivedData;
+
+        public bool IsRunning { get; private set; } = false;
+        private bool readAllData = false;
+        public int numberOfPulses = 0;
 
         public Interface(MaterialButton btnConnect, MaterialButton btnSend)
         {
             externalConnectButton = btnConnect;
             externalSendDataButton = btnSend;
-
 
             InitializeComponent();
 
@@ -51,6 +60,21 @@ namespace SerialPortController
             RefreshCom();
             FillFieldsWithDefaultData(false);
             DisableFields();
+
+        }
+
+        public void ResetControllers(int newNumberOfPulses)
+        {
+            IsRunning = false;
+            readAllData = false;
+            numberOfPulses = newNumberOfPulses;
+            receivedData = txtReceivedData.Text = string.Empty;
+        }
+
+        private void txtReceivedData_TextChanged(object sender, EventArgs e)
+        {
+            txtReceivedData.SelectionStart = txtReceivedData.TextLength;
+            txtReceivedData.ScrollToCaret();
         }
 
         #region Portas Seriais
@@ -64,7 +88,71 @@ namespace SerialPortController
 
         private void btnUpdate_Click(object sender, EventArgs e) { RefreshCom(); }
 
-        #endregion        
+        private void SetDataCommunication() { _control!.SetDataReceivedEventHandler(new SerialDataReceivedEventHandler(DataReceivedHandler)); }
+
+        private void ResetDataCommunication()
+        {
+            _control!.SendData(BrainStimulator.BrainStimulator.STOP_READ);
+            Thread.Sleep(100);
+
+            _control!.SendData(BrainStimulator.BrainStimulator.RESET_BOARD);
+            Thread.Sleep(100);
+
+            _control!.UnSetDataReceivedEventHandler(new SerialDataReceivedEventHandler(DataReceivedHandler));
+            Thread.Sleep(100);
+
+            receivedData = txtReceivedData.Text = string.Empty;
+        }
+
+        private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
+        {
+            string newText = ((SerialPort)sender).ReadExisting();
+            if (!IsRunning)
+            {
+                if (newText.Contains(LOOP) && readAllData) IsRunning = true; else IsRunning = false;
+
+                var separarDadosLidos = newText.Split(new string[] { "R\r\n", "Re\r\n", "Rea\r\n", "Read\r\n", "Readi\r\n", "Readin\r\n", "Reading\r\n", "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                separarDadosLidos.RemoveAll(x => x.Contains(READING));
+                receivedData += string.Join(JUMPLINE, separarDadosLidos);
+                if (receivedData.Contains(SAVED_DATA))
+                {
+                    int result = 0;
+                    var separate = receivedData.Split(SAVED_DATA);
+                    if (separate.Length > 0)
+                    {
+                        var separate2 = separate[1].Split(START_ROUTINE);
+                        int.TryParse(separate2[0].Replace(JUMPLINE, string.Empty), out result);
+                    }
+
+                    var step1 = receivedData.Split("Reseted");
+                    if (step1.Length > 1) receivedData = step1[1];
+
+                    if (result == numberOfPulses && !receivedData.Contains(LOOP))
+                    {
+                        readAllData = true;
+                        var empty = receivedData.Replace(READING, string.Empty).Split(JUMPLINE, StringSplitOptions.RemoveEmptyEntries);
+                        receivedData = null;
+                        Thread.Sleep(10);
+                        this.BeginInvoke(() => { txtReceivedData.Text = $"{string.Join(JUMPLINE, empty)}{JUMPLINE}{START_ROUTINE}"; });
+                    }
+                }
+                Thread.Sleep(10);
+            }
+        }
+
+        public void SendData(string text)
+        {
+            try
+            {
+                _control!.SendData(text);
+            }
+            catch (Exception ex)
+            {
+                Error($"Error when try to{nameof(SendData)}!", ex);
+            }
+        }
+
+        #endregion
 
         #region Controle dos parametros
 
@@ -154,6 +242,8 @@ namespace SerialPortController
                 _control.InitializeSerialPort();
 
                 SetButtonsState(false);
+
+                SetDataCommunication();
             }
             catch (Exception ex) { Error("Problema ao tentar conectar na placa", ex); }
         }
@@ -162,7 +252,10 @@ namespace SerialPortController
         {
             try
             {
+                ResetDataCommunication();
+
                 _control!.Dispose();
+
                 SetButtonsState(true);
             }
             catch (Exception ex) { Error("Problema ao tentar conectar na placa", ex); }
@@ -172,6 +265,18 @@ namespace SerialPortController
             btnConnect.Enabled = value;
             externalSendDataButton.Enabled = !value;
             btnDisconnect.Enabled = !value;
+
+            cbComPortsList.Enabled = value;
+            cbHandShake.Enabled = value;
+            cbParity.Enabled = value;
+            cbStopBits.Enabled = value;
+            switchDefaultParameters.Enabled = value;
+
+            btnUpdate.Enabled = value;
+            txtBaudRate.Enabled = value;
+            txtDataBits.Enabled = value;
+            txtReadTimeOut.Enabled = value;
+            txtWriteTimeOut.Enabled = value;
         }
 
         #endregion
@@ -180,6 +285,8 @@ namespace SerialPortController
 
         private void Interface_FormClosed(object sender, FormClosedEventArgs e)
         {
+            ResetDataCommunication();
+
             externalConnectButton.Enabled = true;
             externalSendDataButton.Enabled = false;
 
@@ -190,7 +297,7 @@ namespace SerialPortController
         {
             if (_control != null && _control!.IsConnected)
             {
-                string message = $"Você realmente deseja fechar esta janela? {downline}{downline} Isso irá cortar a comunicação com o estimulador.";
+                string message = $"Você realmente deseja fechar esta janela? {JUMPLINE}{JUMPLINE} Isso irá cortar a comunicação com o estimulador.";
                 string caption = "Fechar Interface";
                 var result = MessageBox.Show(message, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
@@ -242,7 +349,9 @@ namespace SerialPortController
 
         private void Error(string errorMessage, Exception e)
         {
-            MessageBox.Show($"{errorMessage} {downline}{downline}Exception message:{downline} {e.Message}", "Erro!", MessageBoxButtons.OK, MessageBoxIcon.Error); ;
+            MessageBox.Show($"{errorMessage} {JUMPLINE}{JUMPLINE}Exception message:{JUMPLINE} {e.Message}", "Erro!", MessageBoxButtons.OK, MessageBoxIcon.Error); ;
         }
+
+
     }
 }

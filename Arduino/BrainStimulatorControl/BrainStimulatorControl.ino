@@ -46,6 +46,7 @@
 #define CONTROL_READ_INSTRUCTIONS 'L'
 #define CONTROL_STOP_READ_INSTRUCTIONS 'M'
 #define CONTROL_RESET_INSTRUCTION 'R'
+#define CONTROL_RESET_BOARD 'D'
 
 #define INSTRUCTION_POLARITY_P '+'
 #define INSTRUCTION_POLARITY_N '-'
@@ -73,11 +74,11 @@ int measureUnity;
 int pulseCounter = 0;
 const int numOfPulses = 10;
 
-int Currents[numOfPulses];                           // listed currents above
-int Polarities[numOfPulses];                         //+1 or -1
+int Currents[numOfPulses];                          // listed currents above
+int Polarities[numOfPulses];                        //+1 or -1
 
-double PulseLengths[numOfPulses];                    //time of pulse length
-double InterpulseLengths[numOfPulses];               //time of interpulse interval
+double PulseLengths[numOfPulses];                   //time of pulse length
+double InterpulseLengths[numOfPulses];              //time of interpulse interval
 
 int PulseLengthsMeasure[numOfPulses];               //time of pulse length
 int InterpulseLengthsMeasure[numOfPulses];          //time of interpulse interval
