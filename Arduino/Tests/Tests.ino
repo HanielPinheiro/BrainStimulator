@@ -18,7 +18,7 @@ uint8_t _ledPin = 13;
 void setup() {
   Serial.begin(115200);
   DefineDigitalPins();
-  Set(58);
+  Set(50);
 
   //delta(vh - vl) = 1k100Ohm
   //58 = 654
@@ -43,7 +43,13 @@ Serial.println("Stimulator is ready");
   //digitalWrite(_clock2Pin, DIGIPOT_DOWN);
   //digitalWrite(_clock2Pin, DIGIPOT_UP);
   //delay(3000);
-  
+  int v = 10;
+  while(true)
+  {  Set(v);
+  v+=10;
+  delay(200);
+  if(v >= DIGIPOT_MAX_AMOUNT) break;
+  }
 //  for (int i = 0; i < 5; i++)
 //  {
 //    digitalWrite(_clock1Pin, DIGIPOT_UP);
@@ -55,15 +61,15 @@ Serial.println("Stimulator is ready");
 //    delayMicroseconds(25);
 //  }
 
-  digitalWrite(_clock1Pin, DIGIPOT_UP);
-  digitalWrite(_clock2Pin, DIGIPOT_UP);
-  digitalWrite(_ledPin, DIGIPOT_UP);
-  delay(3000);
-
-  digitalWrite(_clock1Pin, DIGIPOT_DOWN);
-  digitalWrite(_clock2Pin, DIGIPOT_DOWN);
-  digitalWrite(_ledPin, DIGIPOT_DOWN);
-  delay(3000);
+//  digitalWrite(_clock1Pin, DIGIPOT_UP);
+//  digitalWrite(_clock2Pin, DIGIPOT_UP);
+//  digitalWrite(_ledPin, DIGIPOT_UP);
+//  delay(3000);
+//
+//  digitalWrite(_clock1Pin, DIGIPOT_DOWN);
+//  digitalWrite(_clock2Pin, DIGIPOT_DOWN);
+//  digitalWrite(_ledPin, DIGIPOT_DOWN);
+//  delay(3000);
 }
 
 

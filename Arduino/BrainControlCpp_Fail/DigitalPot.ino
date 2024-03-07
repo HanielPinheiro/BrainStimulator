@@ -11,17 +11,12 @@ void Change(int direction, int amount) {
     delayMicroseconds(2);
     if (Digipot_CurrentValue != DIGIPOT_UNKNOWN) {
       Digipot_CurrentValue += (direction == DIGIPOT_UP ? 1 : -1);
-      Digipot_CurrentValue =
-        constrain(Digipot_CurrentValue, 0, DIGIPOT_MAX_AMOUNT);
+      Digipot_CurrentValue = constrain(Digipot_CurrentValue, 0, DIGIPOT_MAX_AMOUNT);
     }
   }
   digitalWrite(DIGIPOT_CS_PIN, HIGH);
 }
 
-void Increase(int amount) {
-  amount = constrain(amount, 0, DIGIPOT_MAX_AMOUNT);
-  Change(DIGIPOT_UP, amount);
-}
 
 void Decrease(int amount) {
   amount = constrain(amount, 0, DIGIPOT_MAX_AMOUNT);
