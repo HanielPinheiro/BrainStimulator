@@ -36,7 +36,7 @@ void setup() {
   //11 = 51 uA 
   Serial.println("Stimulator is ready");
 }
-
+int val = 5;
 void loop()
 {
 Serial.println("Stimulator is ready");
@@ -60,16 +60,25 @@ Serial.println("Stimulator is ready");
 //    digitalWrite(_ledPin, DIGIPOT_DOWN);
 //    delayMicroseconds(25);
 //  }
-
-  digitalWrite(_clock1Pin, DIGIPOT_UP);
-  digitalWrite(_clock2Pin, DIGIPOT_UP);
-  digitalWrite(_ledPin, DIGIPOT_UP);
-  delay(3000);
-
-  digitalWrite(_clock1Pin, DIGIPOT_DOWN);
-  digitalWrite(_clock2Pin, DIGIPOT_DOWN);
-  digitalWrite(_ledPin, DIGIPOT_DOWN);
-  delay(3000);
+ Set(val);
+ val += 5;
+   delay(1000);
+   if(val > DIGIPOT_MAX_AMOUNT)
+   {
+    val = 0;
+      digitalWrite(_ledPin, DIGIPOT_UP);
+      delay(3000);
+      digitalWrite(_ledPin, DIGIPOT_DOWN);
+   }
+//  digitalWrite(_clock1Pin, DIGIPOT_UP);
+//  digitalWrite(_clock2Pin, DIGIPOT_UP);
+//  digitalWrite(_ledPin, DIGIPOT_UP);
+//  delay(3000);
+//
+//  digitalWrite(_clock1Pin, DIGIPOT_DOWN);
+//  digitalWrite(_clock2Pin, DIGIPOT_DOWN);
+//  digitalWrite(_ledPin, DIGIPOT_DOWN);
+//  delay(3000);
 }
 
 
@@ -87,6 +96,7 @@ void DefineDigitalPins() {
 
   pinMode(_turnOnOffPin, OUTPUT);
   digitalWrite(_turnOnOffPin, HIGH);
+  Reset();
 }
 
 void Set(uint8_t value) {
