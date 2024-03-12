@@ -1,3 +1,4 @@
+
 void setup() {
   Digipot_CurrentValue = DIGIPOT_UNKNOWN;
   pinMode(DIGIPOT_INC_PIN, OUTPUT);
@@ -16,7 +17,5 @@ void setup() {
 
 void loop()
 {
-  MonitoringSerialData();
-  if (IsReading) ReceivingInstruction();
-  else if (IsRunning) RunRoutine();
+  MonitoringSerialData();  
 }

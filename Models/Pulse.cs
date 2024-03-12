@@ -25,7 +25,8 @@ namespace BrainStimulator.Models
         public static Dictionary<string, string> measureUnity_DefaultToAmbientRelation= ReflectionHandler.GetFromEnum_DescriptionAndAmbientValueAttributes<MeasureUnity>();
 
         public const string Layout = $"|{nameof(Pulse.PulseLength)}|{nameof(Pulse.PulseMeasureUnity)}|{nameof(Pulse.AfterPulseLength)}"
-                                    + $"|{nameof(Pulse.AfterPulseMeasureUnity)}|{nameof(Pulse.Current)}|{nameof(Pulse.Polarity)}";
+                                    + $"|{nameof(Pulse.AfterPulseMeasureUnity)}|{nameof(Pulse.Polarity)}";
+        //+ $"|{nameof(Pulse.AfterPulseMeasureUnity)}|{nameof(Pulse.Current)}|{nameof(Pulse.Polarity)}";
 
         #endregion
 

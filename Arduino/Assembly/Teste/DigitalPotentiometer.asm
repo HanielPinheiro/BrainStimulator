@@ -1,41 +1,56 @@
-#define __SFR_OFFSET 0x00
-#include "avr/io.h"
-; ------------------------
-.global defineDigiPotPins
-.global set_current_650
-
 ; ------------------------
 ; variables
 ; ------------------------
-.equ INC, 2                ; PORTD2
-.equ UD,  3                ; PORTD3
-.equ CS,  4                ; PORTD4
-.equ MIN, 0                ; Min digipot value
+.equ _MIN	=	 0				        ; Min digipot value
+.equ _MAX	=	255
+.equ _INC	=	2					;Digital 2
+.equ _UD	=	3					;Digital 3
+.equ _CS	=	4					;Digital 4
 
 ; ------------------------------------------------------------------------
 ; defineDigiPotPins
 ; ------------------------------------------------------------------------
-defineDigiPotPins:
-  OUT   DDRB, 0x19       ; set port B as out pin = 00011001
-  LDI   R21, MIN         ; SET MIN to R21 = DIGI POT VALUE
-  LDI   R22, MIN         ; SET MIN to R22 = loop register
-  LDI   R23, MIN         ; SET MIN to R23 = comparison register
-  LDI   R24, 255         ; SET MAX to R24 = amount register
-  RCALL set_ud_off       ; Seta o digipot para decrescer
-  RCALL change           ; Zera o digipot (diminui 255 vezes o counter) agora digipot = R21 = 0
+init_digiPotPins:
+  LDI   R21, 0B11111111	
+  OUT   DDRD, R21		  ; set port D as out in pins
+  LDI   R21, 0B00000000	
+  OUT   PORTD, R21		  ; set port D as out in pins with low value
+
+  LDI   R21, _MIN         ; SET MIN to R21 = DIGI POT VALUE
+  LDI   R22, _MIN         ; SET MIN to R22 = loop register
+  LDI   R23, _MIN         ; SET MIN to R23 = comparison register
+  LDI   R24, _MAX          ; SET MAX to R24 = amount register
+
+  RCALL set_ud_off        ; Seta o digipot para decrescer
+  RCALL change            ; Zera o digipot (diminui 255 vezes o counter) agora digipot = R21 = 0
   RET
 
 ; ------------------------------------------------------------------------
 ; Control state of digital ports
 ; ------------------------------------------------------------------------
-set_inc_on:     SBI   PORTD, INC
-set_inc_off:    CBI   PORTD, INC
+set_inc_on:     
+	SBI   PORTD, _INC
+	RET
 
-set_ud_on:     SBI   PORTD, UD
-set_ud_off:    CBI   PORTD, UD
+set_inc_off:    
+	CBI   PORTD, _INC
+	RET
 
-set_cs_on:     SBI   PORTD, CS
-set_cs_off:    CBI   PORTD, CS
+set_ud_on:     
+	SBI   PORTD, _UD
+	RET
+
+set_ud_off:    
+	CBI   PORTD, _UD
+	RET
+
+set_cs_on:     
+	SBI   PORTD, _CS
+	RET
+
+set_cs_off:    
+	CBI   PORTD, _CS
+	RET
 
 ; ------------------------------------------------------------------------
 ; Set currents
@@ -136,16 +151,15 @@ set_current_50:
 ; Compute differences and set amount
 ; ------------------------------------------------------------------------  
 set_amount:
-  MOV   R24, R21            ; R24 = R21
+  MOV   R24, R21				; R24 = R21
   CP    R24,R23
-  BREQ  ends             ; branch if r24 == R23
-  BRSH  compute_dif      ; R24 > R23, R24 - R23 (Valor atual > valor solicitado)
-  CP    R23,R24
-  RCALL comput_inv_dif   ; R23 > R24, R23 - R24 (Valor solicitado > valor atual)
+  BREQ  end_2					; branch if r24 == R23
+  BRSH  compute_dif				; R24 > R23, R24 - R23 (Valor atual > valor solicitado)
+  RCALL comput_inv_dif			; R23 > R24, R23 - R24 (Valor solicitado > valor atual)
   RET
 
 compute_dif:                    ; Valor atual (R21/R24) > Valor solicitado (R23)
-  SUB    R24,R23                ;R24 e a diferenÃ§a entre R23 e o valor atual
+  SUB    R24,R23                ;R24 e a diferença entre R23 e o valor atual
   RCALL  set_ud_off
   RET
 
@@ -156,27 +170,30 @@ comput_inv_dif:                 ; Valor solicitado (R23) > Valor atual (R21)
   RCALL  set_ud_on
   RET
 
-  ends: RET
-  
+  end_2: RET
 ; ------------------------------------------------------------------------
 ; Change
 ; ------------------------------------------------------------------------
 change:
-       ; Ja chega aqui com a flag digitalWrite(DIGIPOT_UD_PIN, direction) definida
-       RCALL set_inc_on            ;  digitalWrite(DIGIPOT_INC_PIN, HIGH)
-       RCALL set_cs_off            ;  digitalWrite(DIGIPOT_CS_PIN, LOW)  
-       CLR R22
-Loop1: CP R22,R24
-       BREQ next
-       RCALL set_inc_off            ;  digitalWrite(DIGIPOT_INC_PIN, LOW)  
-       RCALL delay_us
-       RCALL delay_us
-       RCALL set_inc_on             ;  digitalWrite(DIGIPOT_INC_PIN, HIGH)  
-       RCALL delay_us
-       RCALL delay_us
-       INC R22
-       RJMP Loop1
+	; Ja chega aqui com a flag digitalWrite(DIGIPOT_UD_PIN, direction) definida
+	RCALL set_inc_on            ;  digitalWrite(DIGIPOT_INC_PIN, HIGH)
+	RCALL set_cs_off            ;  digitalWrite(DIGIPOT_CS_PIN, LOW)  
+	CLR R22
+Loop1: 
+	CP R22,R24
+	BREQ next
+		   
+	RCALL set_inc_off            ;  digitalWrite(DIGIPOT_INC_PIN, LOW)  
+	LDI	  R18, 2
+	RCALL delay_us_2
+	RCALL set_inc_on             ;  digitalWrite(DIGIPOT_INC_PIN, HIGH)  
+	RCALL delay_us
+	RCALL delay_us
+	   
+	INC R22
+	   
+	RJMP Loop1
 
 next:
-  RCALL set_cs_on             ; digitalWrite(DIGIPOT_CS_PIN, HIGH) fim do for loop  
+  RCALL set_cs_on             ; digitalWrite(DIGIPOT_CS_PIN, HIGH) fim do for loop   
   RET

@@ -29,6 +29,7 @@ namespace BrainStimulator
         {
             InitializeComponent();
             SetFormTheme();
+            cbCurrents.DataSource = Pulse.pulseCurrentToCombobox.Select(p => p.Value).ToList();
         }
 
         #region On Load
@@ -223,6 +224,17 @@ namespace BrainStimulator
                 Thread.Sleep(delay);
             }
             catch (Exception ex) { Error("Error when try to send configs to the board", ex); }
+        }
+
+        private void cbCurrents_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            foreach (DataGridViewRow row in PeriodicTab_GridMain.Rows)
+            {
+                if (row.DataBoundItem is Pulse pulse)
+                {
+                    if (cbCurrents.SelectedValue is string item) pulse.Current = item;
+                }
+            }
         }
     }
 }
