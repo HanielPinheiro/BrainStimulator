@@ -8,9 +8,8 @@ uint8_t _incPin = 2;
 uint8_t _udPin = 3;
 uint8_t _csPin = 4;
 
-
-
 uint8_t _turnOnOffPin = 5;
+
 uint8_t _clock1Pin = 11;
 uint8_t _clock2Pin = 12;
 uint8_t _ledPin = 13;
@@ -35,35 +34,34 @@ void setup() {
   //15 = 100uA
   //11 = 51 uA
 
-  digitalWrite(_clock1Pin, DIGIPOT_DOWN);
-  digitalWrite(_clock2Pin, DIGIPOT_DOWN);
-  Set(99);  
+  Set(65);
   Serial.println("Stimulator is ready");
 }
+
 int val = 5;
 void loop()
 {
-//  digitalWrite(_clock1Pin, DIGIPOT_DOWN);
-//  digitalWrite(_clock2Pin, DIGIPOT_DOWN);
+//  digitalWrite(_turnOnOffPin, DIGIPOT_UP);
+  
+  digitalWrite(_clock1Pin, DIGIPOT_DOWN);
+  digitalWrite(_clock2Pin, DIGIPOT_DOWN);  
+  delay(3000);
+
+  digitalWrite(_clock1Pin, DIGIPOT_DOWN);
+  digitalWrite(_clock2Pin, DIGIPOT_UP);
+  delay(3000);
+
+  digitalWrite(_clock1Pin, DIGIPOT_UP);
+  digitalWrite(_clock2Pin, DIGIPOT_UP);
+  delay(3000);
+
+  digitalWrite(_clock1Pin, DIGIPOT_DOWN);
+  digitalWrite(_clock2Pin, DIGIPOT_UP);
+  delay(3000);
+
+//  digitalWrite(_turnOnOffPin, DIGIPOT_DOWN);
 //  delay(3000);
-//  Set(val);
-//  val += 5;
-//  if (val > DIGIPOT_MAX_AMOUNT)
-//  {
-//    val = 0;
-//    digitalWrite(_ledPin, DIGIPOT_UP);
-//    digitalWrite(_turnOnOffPin, DIGIPOT_UP);//turn off
-//    delay(3000);
-//    digitalWrite(_turnOnOffPin, DIGIPOT_UP); //turn on
-//    digitalWrite(_ledPin, DIGIPOT_DOWN);
-//  }
-
-//    digitalWrite(_clock1Pin, DIGIPOT_UP);
-//    digitalWrite(_clock2Pin, DIGIPOT_UP);
-//    delay(3000);
-
 }
-
 
 void DefineDigitalPins() {
   _currentValue = DIGIPOT_UNKNOWN;
@@ -71,14 +69,14 @@ void DefineDigitalPins() {
   pinMode(_incPin, OUTPUT);
   pinMode(_udPin, OUTPUT);
   pinMode(_csPin, OUTPUT);
-  digitalWrite(_csPin, HIGH);
+  digitalWrite(_csPin, DIGIPOT_UP);
 
   pinMode(_clock1Pin, OUTPUT);
   pinMode(_clock2Pin, OUTPUT);
   pinMode(_ledPin, OUTPUT);
 
   pinMode(_turnOnOffPin, OUTPUT);
-  digitalWrite(_turnOnOffPin, HIGH);
+  digitalWrite(_turnOnOffPin, DIGIPOT_UP);
 }
 
 void Set(uint8_t value) {

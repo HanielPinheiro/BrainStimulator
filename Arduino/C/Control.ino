@@ -1,6 +1,6 @@
 void ControlWithSerialKeywords() {
-  char target = tempData[1]; 
-  
+  char target = tempData[1];
+
   // =========================================================
   // --- Reset ---
   if (target == CONTROL_RESET_INSTRUCTION)  //E>
@@ -16,7 +16,7 @@ void ControlWithSerialKeywords() {
     HasInstruction = false;
     printReseted();
   }
-  
+
   // =========================================================
   // --- Routine ---
   if (target == CONTROL_START_ROUTINE)  //A>
@@ -26,6 +26,7 @@ void ControlWithSerialKeywords() {
     {
       IsRunning = true;
       printRoutineOn();
+      SetPotentiometerValue(Currents[0]);
     }
   }
   if (target == CONTROL_STOP_ROUTINE)  //B>

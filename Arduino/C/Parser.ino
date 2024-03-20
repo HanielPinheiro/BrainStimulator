@@ -43,17 +43,17 @@ void ParseInstruction() {
 }
 
 void GetTimeFromInstruction(char *data, int siz, int* lengths, int* fracs, int* measures)
-{  
+{
   char parser[siz];
   int ctParse = 0;
-  
+
   int measureUnity = 0;
   int integer = 0;
   int fractional = 0;
-  
+
   for (int i = 0; i < siz; i++) {
     if (data[i] == INSTRUCTION_DECIMAL) {
-     // printArr(parser, ctParse);
+      // printArr(parser, ctParse);
       //USART_Transmit(newLine);
       ctParse = 0;
       integer = atoi(parser);
@@ -68,7 +68,7 @@ void GetTimeFromInstruction(char *data, int siz, int* lengths, int* fracs, int* 
       measureUnity = data[i];
       break;
     }
-    else{
+    else {
       parser[ctParse] = data[i];
       ctParse++;
     }
