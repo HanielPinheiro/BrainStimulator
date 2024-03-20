@@ -46,7 +46,7 @@
 #define INSTRUCTION_SEPARATOR '$'
 
 int pulseCounter = 0;
-const int numOfPulses = 10;
+const int numOfPulses = 10;                         //This was defined by consense between the developers
 
 int Digipot_CurrentValue = 0;
 
@@ -60,20 +60,22 @@ int PulseLengthsMeasure[numOfPulses];                   //meas unity time of pul
 int InterpulseLengths[numOfPulses];              //time of interpulse interval
 int InterpulseLengthsFractional[numOfPulses];              //frac part of time of interpulse interval
 int InterpulseLengthsMeasure[numOfPulses];              //meas unity time of interpulse interval
-
+// =========================================================
+// --- Control Flags ---
 bool HasInstruction = false;
 bool IsReading = false;
 bool IsRunning = false;
 bool IsWaiting = false;
 int globalCounter = 0;
-bool positiveCycle = true;
+bool step1 = true; // the concept is: step1 = true → PulseLength delay, false → InterpulseLength delay
+
 // =========================================================
 // --- Interrupção ---
-int thr1 = 0, thr2 = 0;
 int controlTimeS = 0, controlTimeMs = 0, controlTimeUs = 0;
 int targetValueS = 0, targetValueMs = 0, targetValueUs = 0;
 bool runDelayS = false, runDelayMs = false, runDelayUs = false;
 int valorTimer0 = 255;
+
 // =========================================================
 // --- Serial ---
 const int bufferSize = 30;
@@ -92,12 +94,7 @@ int main()
 
   while (1) {
     USART_Transmit(newLine);
-    USART_Receive();
-    if (IsRunning)
-    {
-      RunCycle();
-      //USART_Transmit('w');
-    }
+    USART_Receive();   
   }
 
   return 0;

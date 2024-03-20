@@ -8,10 +8,8 @@ void Change(int dir, int amount) {
 
   for (int i = 0; i < amount; i++) {
     setInc_Off;
-    Wait(2, 0, INSTRUCTION_UNITY_US);
-
+    
     setInc_On;
-    Wait(2, 0, INSTRUCTION_UNITY_US);
 
     if (Digipot_CurrentValue != DIGIPOT_UNKNOWN) {
       Digipot_CurrentValue += (dir == 1 ? 1 : -1);

@@ -17,12 +17,11 @@ void ParseInstruction() {
         SetCurrentValueToArr(item);
 
       else if (stepper == 2) {
-
         if (strcmp(item, INSTRUCTION_POLARITY_P))tempPolarity = 1;
         else tempPolarity = 0;
         Polarities[pulseCounter] = tempPolarity;
-
       }
+      
       else if (stepper == 3) {
         GetTimeFromInstruction(item, ctItem, PulseLengths, PulseLengthsFractional, PulseLengthsMeasure);
       }
@@ -34,8 +33,8 @@ void ParseInstruction() {
       stepper++;
     }
   }
-  //USART_Transmit(newLine);
-  //printArr(item, ctItem);
+//  USART_Transmit(newLine);
+//  printArr(item, ctItem);
 
   //Step 4
   GetTimeFromInstruction(item, ctItem, InterpulseLengths, PulseLengthsFractional, InterpulseLengthsMeasure);
@@ -53,7 +52,7 @@ void GetTimeFromInstruction(char *data, int siz, int* lengths, int* fracs, int* 
 
   for (int i = 0; i < siz; i++) {
     if (data[i] == INSTRUCTION_DECIMAL) {
-      // printArr(parser, ctParse);
+     // printArr(parser, ctParse);
       //USART_Transmit(newLine);
       ctParse = 0;
       integer = atoi(parser);

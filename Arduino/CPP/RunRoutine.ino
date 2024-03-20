@@ -4,19 +4,27 @@ void RunRoutine() {
     //SetPotentiometerValue(Currents[i]);
     //Serial.print("Current");Serial.println(Currents[i]);
     
-    Serial.print("Polarities");Serial.println(Polarities[i]);
-    if (Polarities[i] == 1) digitalWrite(CLOCK_1_PIN, HIGH);   else digitalWrite(CLOCK_2_PIN, HIGH);
+    //Serial.print("Polarities");Serial.println(Polarities[i]);
+    if (Polarities[i] == 1) 
+    {
+      digitalWrite(CLOCK_1_PIN, LOW);   
+      digitalWrite(CLOCK_2_PIN, LOW);   
+    }
+    else 
+    {
+      digitalWrite(CLOCK_1_PIN, HIGH);   
+      digitalWrite(CLOCK_2_PIN, HIGH);  
+    }
     
     /*Serial.print("Wait int: ");Serial.println(PulseLengths[i]);
     Serial.print("Wait frac: ");Serial.println(PulseLengthsFractional[i]);
     Serial.print("Wait meas: ");Serial.println(PulseLengthsMeasure[i]);    */
     Wait(PulseLengths[i],  PulseLengthsFractional[i], PulseLengthsMeasure[i]);
-
-    digitalWrite(CLOCK_1_PIN, LOW); digitalWrite(CLOCK_2_PIN, LOW);
     
     /*Serial.print("Wait int: ");Serial.println(InterpulseLengths[i]);
     Serial.print("Wait frac: ");Serial.println(InterpulseLengthsFractional[i]);
     Serial.print("Wait meas: ");Serial.println(InterpulseLengthsMeasure[i]);    */
+    digitalWrite(CLOCK_1_PIN, LOW); digitalWrite(CLOCK_2_PIN, HIGH);
     Wait(InterpulseLengths[i],  InterpulseLengthsFractional[i], InterpulseLengthsMeasure[i]);
   }
 }

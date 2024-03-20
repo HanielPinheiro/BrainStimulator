@@ -3,6 +3,10 @@ void ControlWithSerialKeywords() {
 
   // =========================================================
   // --- Reset ---
+  void(* resetFunc) (void) = 0;
+  if (target == CONTROL_RESET_BOARD)  //F>
+    resetFunc();
+    
   if (target == CONTROL_RESET_INSTRUCTION)  //E>
   {
     ResetBufferUART();

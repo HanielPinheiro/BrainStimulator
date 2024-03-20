@@ -1,6 +1,6 @@
 // =========================================================
-// --- Delay control ---
-void Wait(int timer, int fracTimer, int timeUnity)
+// --- Delay config ---
+void DelayConfig(int timer, int fracTimer, int timeUnity)
 {
   if (timeUnity == INSTRUCTION_UNITY_US)
   {
@@ -16,6 +16,7 @@ void Wait(int timer, int fracTimer, int timeUnity)
     SetDelayS(timer);
     if (fracTimer > 0) SetDelayMs(fracTimer);
   }
+  IsWaiting = true;
 }
 
 void SetDelayS(int timer) {
