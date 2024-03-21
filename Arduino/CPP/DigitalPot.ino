@@ -15,17 +15,17 @@ void SetPotentiometerValue(int value) {
   if (amount > DIGIPOT_MAX_AMOUNT) amount = DIGIPOT_MAX_AMOUNT;
   if (amount < 0) amount = 0;
 
-  if (dir == 1)      setUd_On();//digitalWrite(DIGIPOT_UD_PIN, HIGH);
-  else     setUd_Off();//digitalWrite(DIGIPOT_UD_PIN, LOW);
-  setInc_On();//digitalWrite(DIGIPOT_INC_PIN, HIGH);
-  setCs_Off();//digitalWrite(DIGIPOT_CS_PIN, LOW);
+  if (dir == 1) setUd_On();//digitalWrite(DIGIPOT_UD_PIN, HIGH);
+  else setUd_Off();
+  
+  setInc_On();
+  setCs_Off();
 
   for (int i = 0; i < amount; i++) {
-    setInc_On();//digitalWrite(DIGIPOT_INC_PIN, LOW);
-    delay_us();
-    setInc_Off();//digitalWrite(DIGIPOT_INC_PIN, HIGH);
-    delay_us();
-
+    setInc_On();
+    delayMicroseconds(2);
+    setInc_Off();
+    delayMicroseconds(2);
 
     if (Digipot_CurrentValue != DIGIPOT_UNKNOWN) {
       Digipot_CurrentValue += (dir == 1 ? 1 : -1);
@@ -35,11 +35,10 @@ void SetPotentiometerValue(int value) {
     }
   }
 
-  setCs_On();// digitalWrite(DIGIPOT_CS_PIN, HIGH);
-
-
+  setCs_On();
 }
 
+// =========================================================
 void setInc_On(void) {
   PORTD |= (1 << PORTD2);
 }

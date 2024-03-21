@@ -1,12 +1,10 @@
-#include "arduino_aux.h"
-
 #define DIGIPOT_INC_PIN 2
 #define DIGIPOT_UD_PIN 3
 #define DIGIPOT_CS_PIN 4
 
 #define CLOCK_1_PIN 11
 #define CLOCK_2_PIN 12
-#define ON_OFF_PIN 8
+#define ON_OFF_PIN 5
 
 #define DIGIPOT_MAX_AMOUNT 99
 #define DIGIPOT_UNKNOWN 255
@@ -56,9 +54,9 @@
 #define INSTRUCTION_DECIMAL '.'
 #define INSTRUCTION_SEPARATOR "$"
 #define INSTRUCTION_END '>'
-
+// =========================================================
 int pulseCounter = 0;
-const int numOfPulses = 10;
+const int numOfPulses = 50;
 
 int Digipot_CurrentValue = 0;
 
@@ -78,7 +76,6 @@ bool IsReading = false;
 bool IsRunning = false;
 
 // =========================================================
-// --- Serial --- SET$150$+$200U$999.8M> SET$350$-$100M$100U>
 const int bufferSize = 30;
 int counterBuffer = 0;
 char tempData[bufferSize];
