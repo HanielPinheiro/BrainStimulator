@@ -25,7 +25,7 @@ void loop()
   //SET$450$-$200.8M$1.2S>
   if (IsRunning) {
     RunRoutine();
-    Serial.println(micros());
+    //Serial.println(micros());
   }
   if (millis() - timeMilis >= 50)
   {
